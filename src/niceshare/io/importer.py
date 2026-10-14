@@ -26,7 +26,7 @@ def read_inventory(sheet: str) -> Warehouse:
             case ".csv":
                 df = pl.read_csv(source=inventory)
             case _:
-                LOGGER.warning(f"This file type is not supported: {inventory.name}")
+                LOGGER.warning(f"This file type is not supported: {inventory.suffix}")
                 exit(1)
         return Warehouse.create(sheet, df)
     except (NoDataError, IOException, CatalogException) as e:
