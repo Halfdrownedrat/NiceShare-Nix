@@ -26,6 +26,7 @@
           ];
 
           shellHook = ''
+            export LD_LIBRARY_PATH=${pkgs.gcc-unwrapped.lib}/lib:$LD_LIBRARY_PATH
             export UV_PYTHON_PREFERENCE=only-system
             export UV_PYTHON=python314
             
