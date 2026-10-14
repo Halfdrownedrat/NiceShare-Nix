@@ -1,9 +1,8 @@
-# To run the flake:
-# nix develop 
+# To run: nix develop 
+# To reinitialize the: nix flake update
+# Manuall uv sync: uv sync --dev 
+# To run the project: uv run niceshare
 
-# BROKEN: 
-# To create/update the requirements.nix 
-# nix run github:nix-community/pip2nix -- generate -r requirements.txt
 {
   description = "NiceShare development environment";
 
@@ -23,6 +22,7 @@
             python314
             uv
             tk
+            gcc-unwrapped
           ];
 
           shellHook = ''
