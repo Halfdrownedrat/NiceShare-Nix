@@ -9,9 +9,23 @@ from niceshare.helper.logger import LOGGER
 from niceshare.helper.paths import get_path
 from niceshare.io.warehouse import Warehouse
 
+""" Data Importer for Warehouses and images"""
 
 def read_inventory(sheet: str) -> Warehouse:
+    """Creates Warehouse from string 
+    Handles file formats: duckdb, xlsx, ods, csv
+
+    Args:
+        sheet (str): The Warehouse Data File (Path)
+    
+    Returns: 
+        Warehouse: Newly created warehouse object 
+
+    """
+
+    # TODO Change sheet to Path directly
     inventory = get_path(settings.data_filename)
+    # Attempts to parse the warehouse 
     try:
         """
         LOGGER.debug(f"Reading sheet {sheet} from {inventory.name}...")
@@ -36,7 +50,21 @@ def read_inventory(sheet: str) -> Warehouse:
         exit(1)
 
 
-async def handle_images(subfolder: str, df: DataFrame):
+async def handle_images(subfolder: str, df: DataFrame) -> DataFrame:
+    """Manually caches linked images to DataFrame based on url
+
+    Args:
+        subfolder (str): Subfolder (Path) to image folder
+        df (DataFrame): Df with image paths to be replaced
+    
+    Returns:
+        DataFrame: Returns the df with cached images
+        
+    """
+
+    # TODO maybe replace with df.columns.get...
+    # TODO Replace manuall caching with something better 
+
     columns = settings.columns
     if "image" in columns and "image" in df.columns:
         for idx, row in enumerate(df.iter_rows(named=True)):

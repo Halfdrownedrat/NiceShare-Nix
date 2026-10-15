@@ -69,6 +69,12 @@ async def pull_wiki():
 
 
 async def read_wiki() -> Wiki:
+    """ Constructs the wiki from a file
+
+    Returns:
+        Wiki: The Wiki created from the help page, definid in the settings 
+    
+    """
     file = get_path(settings.help["path"], "pages")
     try:
         with open(file, "r") as f:
@@ -85,6 +91,15 @@ async def read_wiki() -> Wiki:
 
 
 def parse_home(home: str) -> Tuple[str, list[WikiChapter]]:
+    """Parse the home page text
+
+    Args:
+        home (str): The Homepage as text 
+    
+    Returns:
+        Tuple[str, list[WikiChapter]]: A tuple with a list of wiki chapters 
+
+    """
     home = home.replace("4.8em", "") #TODO
     soup = BeautifulSoup(home, "html.parser")
     toc = soup.find('ul', class_="contents")
@@ -101,6 +116,16 @@ def parse_home(home: str) -> Tuple[str, list[WikiChapter]]:
     return soup.prettify(), [i for i in WikiChapter.create(menu)]
 
 def clean_menu(menu: list[WikiChapter], content: list[WikiChapter]) -> Generator[WikiChapter, None, None]:
+    """#TODO
+
+    Args:
+        menu (list[WikiChapter]): #TODO
+        content (list[WikiChapter]): #TODO
+        
+    Returns:
+        Generator[WikiChapter, None, None]: A Generator for the Wiki Page 
+
+    """
     for idx, chapter in enumerate(menu):
         with suppress(IndexError):
             pages = content[idx].pages
@@ -110,7 +135,14 @@ def clean_menu(menu: list[WikiChapter], content: list[WikiChapter]) -> Generator
                 chapter.pages.pop(name)
         yield chapter
 
+# TODO Why does this exists
 def fix_styles(style: str):
+    """ Helper Function for fixing style 
+    
+    Args:
+        style (str): Style as string block
+    
+    """
     style = style.replace("--color-link: #206ea7", f"--color-link: {settings.theme.get('links')}")
     style = style.replace("color:#222", "color:#fff")
     style = style.replace("font-style:italic", "")
@@ -120,10 +152,14 @@ def fix_styles(style: str):
 
 
 async def parse_pages(pages: list[str]) -> list[WikiChapter]:
-    """
-    Parses the table of contents from a list of page-html-strings.
-    :param pages: The list of html-strings containing the pages
-    :return: a list of WikiChapters
+    """Parses the table of contents from a list of page-html-strings.
+
+    Args:
+        pages: The list of html-strings containing the pages
+        
+    Returns:
+        list[WikiChapters]: A list of WikiChapters
+
     """
     page_dict: dict[str, dict[str, str]] = {}
     chapter_id = 0

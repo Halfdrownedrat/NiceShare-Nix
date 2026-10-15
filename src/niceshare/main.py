@@ -12,9 +12,12 @@ from niceshare.helper.paths import get_path
 from niceshare.io.load_data import load_data_from_dav, load_wiki
 from niceshare.ui.root import root
 
+""" Main Entrypoint for the programm that starts up the UI and retrieves needet files."""
 
 # Starts the UI
 def main():
+    """ Main Function. Retrieves Data and starts the UI.
+    """
     warehouses, pages = asyncio.run(load_data_from_dav())
     if settings.help["wiki"]:
         wiki = asyncio.run(load_wiki())

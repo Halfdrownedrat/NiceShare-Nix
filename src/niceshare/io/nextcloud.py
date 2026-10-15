@@ -10,7 +10,11 @@ from niceshare.helper.logger import LOGGER
 from niceshare.helper.paths import get_path
 
 
+""" Nectcloud Handling Module """
+
 class NextcloudSettings(BaseSettings):
+    """ Nextcloud Settings read from .env file
+    """
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="UTF-8",
@@ -23,9 +27,20 @@ class NextcloudSettings(BaseSettings):
 
 
 class Nextcloud(Client):
+    """ Nextcloud instance
+    """
+
     instance = None
 
     def __init__(self, remote_dir: str, ncs: NextcloudSettings = NextcloudSettings()):
+        """ Nextcloud init
+
+        Args:
+            remote_dir (str): Web URL to the nextcloud folder
+            ncs (NextcloudSettings): Settings for Nextcloud
+
+        """
+
         self._domain = ncs.domain
         self._user = ncs.user
         self._webdav_url = f"https://{self._domain}/remote.php/dav/files/{self._user}"
@@ -34,21 +49,41 @@ class Nextcloud(Client):
 
     @classmethod
     def singleton(cls) -> Self:
+        """#TODO idk
+        """
         if not cls.instance:
             cls.instance = Nextcloud(remote_dir=settings.dav["dir"])
         return cls.instance
 
     @staticmethod
     def shut_down_if_missing_file(path: Path) -> None:
+        """Shuts down if a file is missing
+        
+        Args:
+            path (Path): The path to the required file 
+
+        """
+
         if not path.is_file():
             LOGGER.exception(f"\nFile: >>>{path}<<< does not exist.\n Shutting down.")
             exit(1)
 
     def pull_files(self):
+        """Pull files (multible) from remote
+        """
+
         for key, file in settings.dav["pull"].items():
             self.pull_file(key, file)
 
     def pull_file(self, key: str, file: str) -> None:
+        """Pull a specific (singular) file from the remote
+
+        Args:
+            key (str): #TODO 
+            file (str): Filepath as string 
+        
+        """
+
         if key in ["inventory", "logo"]:
             local = get_path(Path(file).name)
         else:
@@ -69,5 +104,13 @@ class Nextcloud(Client):
             self.shut_down_if_missing_file(local)
 
     def push_file(self, file: Path) -> None:
+        """Push File to remote (Update or Upload) 
+
+        Args:
+            file (Path): File to upload 
+        """
+
+        #TODO Can it overwrite existing files?
+        
         self.upload_file(get_path(file.name), "/".join((self.remote_dir, file.name)), overwrite=True)
         LOGGER.info(f"Successfully pushed {file.name} to remote directory.")

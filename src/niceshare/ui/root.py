@@ -27,6 +27,14 @@ def root(
     wiki: Wiki = None,
     display_wiki=None,
 ) -> None:
+    """The Constructor function for creating the root page.
+
+    Args:
+        warehouses (list[Warehouse]): A list of all warehouses
+        markdown (dict[str, str]): #TODO
+        wiki (Wiki): A wiki object if the wiki is active, otherwise None
+        display_wiki: #TODO
+    """
     ui.add_head_html("""
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
         <script>

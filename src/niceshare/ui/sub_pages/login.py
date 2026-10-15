@@ -6,8 +6,14 @@ from nicegui import ui, app
 from niceshare.ui.auth import create_jwt
 from niceshare.ui.layout import main_menu, drawer_menu
 
+""" Login Sub Page Module """
 
 def login_page():
+    """Login Page Constructor
+    
+    Manages the safe User Login
+
+    """
     app.storage.user.update({"auth_token": None})
     main_menu.refresh()
     drawer_menu.refresh()

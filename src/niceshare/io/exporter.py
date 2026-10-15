@@ -8,8 +8,16 @@ from niceshare.io.excel import write_sheet
 from niceshare.io.nextcloud import Nextcloud
 from niceshare.io.warehouse import Warehouse
 
+""" Export for Excel files (in Nextcloud)"""
 
-def export_inventory(warehouses:list[Warehouse]):
+def export_inventory(warehouses:list[Warehouse]) -> None:
+    """Exports warehouses to excel and pushes it to nextcloud
+
+    Args:
+        warehouses (list[Warehouse]): List of Warehouses
+
+    """
+
     path = get_path(f"{settings.data_filename}.xlsx")
     with Workbook(path, {'strings_to_numbers': True, 'default_date_format': settings.date_format}) as workbook:
         for warehouse in warehouses:

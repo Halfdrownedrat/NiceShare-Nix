@@ -6,8 +6,16 @@ from niceshare.helper.logger import LOGGER
 from niceshare.ui.helper.markdown import render_markdown
 from niceshare.ui.helper.reusable_elements import share_fab
 
+""" Help Sub-Page Module"""
 
 async def help_page(ld: LeftDrawer, md: dict[str, str]):
+    """Help Sub-Page Creator 
+
+    Args:
+        ld (LeftDrawer): The Left Drawer
+        md (dict[str, str]): #TODO 
+
+    """
     ld.hide()
     ui.page_title(f"{settings.help['label']}")
     LOGGER.debug(f"Creating help page...")
@@ -15,6 +23,15 @@ async def help_page(ld: LeftDrawer, md: dict[str, str]):
         render_markdown(md.get(settings.help["label"]))
 
 async def wiki_page(name: str, content: str, ld: LeftDrawer, style: str):
+    """ Wiki Page Creator
+
+    Args:
+        name (str): The Name of the wiki page
+        content (str): The contents of the page as a single string block
+        ld (LeftDrawer): The Left Drawer
+        style (str): Style Attributes 
+
+    """
     ld.hide()
     ui.page_title(f"{name.capitalize()}")
     LOGGER.debug(f"Creating wiki page {name}...")

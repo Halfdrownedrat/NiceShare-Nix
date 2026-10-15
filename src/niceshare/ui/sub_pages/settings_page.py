@@ -9,12 +9,23 @@ from niceshare.io.load_data import load_data_from_dav, load_wiki
 from niceshare.io.warehouse import Warehouse
 from niceshare.ui.auth import authenticate_user
 
+""" Settings Sub-Page Module """
 
 def settings_page(ld: LeftDrawer, warehouses:list[Warehouse]):
+    """Settings Sub Page Creator
+
+    Args:
+        ld (LeftDrawer): The Left Drawer
+        warehouses (list[Warehouse]): List of all warehouses 
+
+    """
+    # Redirects users to login page if not logged in 
     if not authenticate_user():
         ui.notify(i18n.get("admin.not_admin"), color="negative", position="top")
         ui.navigate.to("/login")
     ld.hide()
+
+    # Creates Settings Page
     ui.page_title(f"{settings.settings['label']}")
     LOGGER.debug(f"Creating settings page...")
     with ui.tab_panel("settings").classes("m-0 p-10 max-sm:pb-20 items-center w-full scroll h-dvh"):

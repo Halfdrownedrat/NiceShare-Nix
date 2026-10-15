@@ -18,8 +18,11 @@ from niceshare.helper.dates import convert_dates
 from niceshare.helper.i18n import i18n
 from niceshare.helper.logger import LOGGER
 
+""" Mail Handler Module"""
 
 class RequestType(StrEnum):
+    """Request Type Enum
+    """
     request = "request"
     update = "update"
     delete = "delete"
@@ -27,6 +30,8 @@ class RequestType(StrEnum):
 
 
 class MailServer(BaseSettings):
+    """Reads basic Mail Settings from .env file
+    """
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="UTF-8", env_prefix="MAIL_", extra="ignore")
 
     domain: str
@@ -42,12 +47,27 @@ def send_mail(
     exception: Exception = None,
     mail_server: MailServer = MailServer(),
 ) -> None:
+    """Email Sender
+
+    Creates and handles the request email
+
+    Args:
+        request (dict[str, str | dict[str, str]]): Request Dict 
+        request_type (RequestType): Request Type
+        filename (Path): Potential file (Path) to be attached to the email
+        exception (Exception): #TODO 
+        mail_server (MailServer): Custom MailServer or default if none specified
+    
+    """
+
     LOGGER.debug("Connecting to SMTP Server...")
     email = request.get("email")
     user_id = request.get("edit_link").split("=")[-1]
+
     with smtplib.SMTP_SSL(mail_server.domain, mail_server.port, context=ssl.create_default_context()) as smtp:
         smtp.ehlo()
         smtp.set_debuglevel(1)
+
         LOGGER.debug("Logging into SMTP Client with credentials...")
         smtp.login(mail_server.user, mail_server.password)
         mail = MIMEMultipart("mixed")
@@ -55,6 +75,8 @@ def send_mail(
         mail.add_header("From", f"{email}")
         mail.add_header("Date", formatdate(localtime=True))
         mail.add_header("Message-ID", f"<{user_id}-{request.get(request_type)}@{mail_server.domain}>")
+
+        # Handling non request type emails (update, delete, failure)
         if request_type != "request":
             mail.add_header("In-Reply-To", f"<{user_id}-{request.get(RequestType.request)}@{mail_server.domain}>")
             mail.add_header("References", f"<{user_id}-{request.get('request')}@{mail_server.domain}>")
@@ -62,6 +84,8 @@ def send_mail(
         mail.add_header("Reply-To", f"{email}")
         # mail.attach(MIMEText(create_text("text", request, exception), "plain"))
         mail.attach(MIMEText(create_text("html", request, exception), "html"))
+
+        # Attaching file as payload 
         if filename is not None:
             with open(filename, "rb") as attachment:
                 part = MIMEBase("application", "octet-stream")
@@ -70,6 +94,7 @@ def send_mail(
             part.add_header("Content-Disposition", f"attachment; filename={filename.name}")
             mail.attach(part)
 
+        # Setting receiver and sending email
         receiver = [settings.mail["mail_to"], request.get("email")] if not exception else [settings.mail["admin"]]
         mail.add_header("To", ", ".join(receiver))
         LOGGER.debug(f"Sending E-Mail to {receiver}...")

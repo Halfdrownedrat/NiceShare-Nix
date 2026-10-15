@@ -16,11 +16,26 @@ from niceshare.io.warehouse import Warehouse
 from niceshare.ui.helper.calculations import get_final
 
 
+""" Excel File Request and Overlap Handling """
+
 async def handle_request(
     request: dict[str, str | dict[str, str]],
-        warehouses: list[Warehouse],
-        dl_path: Path,
-        delete: bool = False) -> DataFrame:
+    warehouses: list[Warehouse],
+    dl_path: Path,
+    delete: bool = False) -> DataFrame:
+    """Handle Request
+
+    Args:
+        request (dict[str, str | dict[str, str]]): #TODO
+        warehouses (list[Warehouse]): #TODO
+        dl_path (Path): #TODO
+        delete (bool): #TODO
+    
+    Returns:    
+        DataFrame: #TODO
+
+    """
+
     start, end, month, year = convert_dates(request.get("dates"), string=False)
     path = get_path(f"{settings.requests['filename']}-20{year}.xlsx")
     sheets = {}
@@ -94,7 +109,17 @@ async def handle_request(
     Nextcloud.singleton().push_file(path)
     return sheets[request_name]
 
-def write_overview(request: dict[str, str | dict[str, str]]):
+def write_overview(request: dict[str, str | dict[str, str]]) -> DataFrame:
+    """Helper Function for writing Overviews (Metadata)
+    
+    Args:
+        request (dict[str, str | dict[str, str]]): #TODO
+    
+    Returns: 
+        DataFrame: #TODO 
+    
+    """
+
     # Write Column Headers
     df = pl.DataFrame()
     count = 0
@@ -122,6 +147,14 @@ def write_overview(request: dict[str, str | dict[str, str]]):
 
 
 def write_sheet(df: DataFrame, ws: Worksheet, wb: Workbook):
+    """Write Data to a excel sheet
+    
+    Args:
+        df (DataFrame): #TODO
+        ws (Worksheet): #TODO
+        wb (Workbook): #TODO
+    """
+
     with suppress(AttributeError):
         backup = ws.table_cells
     try:
@@ -136,6 +169,18 @@ def write_sheet(df: DataFrame, ws: Worksheet, wb: Workbook):
         write_sheet(pl.from_dict(backup), ws, wb)
 
 def find_overlaps(sheets:dict[str, DataFrame], request: dict[str, str | dict[str, str]], delete:bool) -> dict[str, DataFrame]:
+    """Checks for different types of overlaps in requests
+
+    Args:
+        sheets (dict[str, DataFrame]): #TODO
+        request (dict[str, str | dict[str, str]]): #TODO
+        delete (bool): #TODO
+    
+    Returns:
+        dict[str, DataFrame]: #TODO
+
+    """
+
     # Check if to requests overlap timewise
     overview = list(sheets.values())[0]
     overlap = i18n.get("form.overlap")
@@ -181,7 +226,20 @@ def find_overlaps(sheets:dict[str, DataFrame], request: dict[str, str | dict[str
 
     return sheets
 
-def add_overlap_column(df: DataFrame, other: DataFrame | list, col_to_match: str, delete:bool = False):
+def add_overlap_column(df: DataFrame, other: DataFrame | list, col_to_match: str, delete:bool = False) -> DataFrame:
+    """Add/Update Overlapt Colum to dataframe #TODO
+
+    Args:
+        df (DataFrame): #TODO:
+        other (DataFrame | list): #TODO
+        col_to_match (str): #TODO
+        delete (bool): #TODO
+    
+    Returns:
+        DataFrame: #TODO
+
+    """
+    
     # Update overlap column in "df" with matching objects in "other" (keep existing overlaps with other requests)
     overlap = i18n.get("form.overlap")
     if isinstance(other, DataFrame):

@@ -12,8 +12,16 @@ from niceshare.ui.helper.calculations import total_weight
 from niceshare.ui.helper.magic_links import load_data_from_magic_link
 from niceshare.ui.helper.reusable_elements import badge, next_fab, tabs, tab_panels, back_fab
 
+""" Checkout cart Sub-Page"""
 
 async def cart_page(warehouses: list[Warehouse], args: PageArguments) -> None:
+    """Cart Sub-Page Creator 
+
+    Args:
+        warehouses (list[Warehouse]): List of Warehouses
+        args (PageArguments): Page Styling Arguments? #TODO 
+
+    """
     ui.query(".nicegui-sub-pages").classes(replace="bg-dark w-full no-scroll").style(replace="gap:0")
 
     current_id = app.storage.browser["id"]

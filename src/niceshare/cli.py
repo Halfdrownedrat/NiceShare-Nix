@@ -10,8 +10,10 @@ def get_args() -> Namespace:
     """Creates and configures an argparser for the command line interface and returns the arguments given by the user as a dictionary.
 
     Returns:
-        dict: The arguments given in the command line.
+        Namespace: The arguments given in the command line.
+
     """
+    
     # Get argparser
     argparser = argparse.ArgumentParser(
         prog="inventurgui",

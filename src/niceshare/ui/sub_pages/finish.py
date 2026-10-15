@@ -8,8 +8,15 @@ from niceshare.ui.helper.magic_links import get_magic_link
 from niceshare.ui.helper.reusable_elements import back_fab
 from niceshare.ui.layout import drawer_menu
 
+""" Finish/Checkout Sub-Page Module"""
 
 async def finish_page(warehouses: list[Warehouse]):
+    """Finish Page Creator
+    
+    Args:
+        warehouses (list[Warehouse]): List of all warehouses 
+
+    """
     ui.page_title(f"{settings.finish['label']}")
     with ui.tab_panel("finish").classes("w-full h-dvh m-0"):
         with ui.column(align_items="center").classes("mx-auto my-auto text-center items-center"):

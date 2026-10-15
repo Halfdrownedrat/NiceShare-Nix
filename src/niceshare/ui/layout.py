@@ -15,10 +15,21 @@ from niceshare.io.wiki import WikiChapter, MenuItem
 from niceshare.ui.auth import authenticate_user
 from niceshare.ui.helper.reusable_elements import badge
 
+""" Layout functions for displaying warehouse contents, wiki pages"""
 
 def create_layout(
     warehouses: list[Warehouse], wiki_menu: list[WikiChapter] | None
 ) -> Tuple[LeftDrawer, RightDrawer | None]:
+    """Layout Creation function for warehouse and wiki display
+
+    Args:
+        warehouses (list[Warehouse]): A list of warehouses to layout 
+        wiki_menu (list[WikiChapter]): The Respective item wiki or None
+    Returns:
+        Tuple[LeftDrawer, RightDrawer | None]: A Tuple with either left and right drawer or only the left side
+
+    """
+
     # Drawers
     with ui.left_drawer(bordered=True).classes("gap-y-2 p-0 items-stretch").props("width=250") as ld:
         ui.space().classes("sm:hidden")
@@ -54,6 +65,15 @@ def main_menu(
     classes: str = "stretch",
     props: str = "unelevated no-wrap text-color=secondary square",
 ) -> None:
+    """ Main menu creation function 
+    
+    Args:
+        ld (LeftDrawer): The Left Drawer
+        rd (None | RightDrawer): The Right Drawer (or None)
+        classes (str): #TODO Propably html/javascript styling (scaling)
+        props (str): #TODO
+
+    """
     warehouse_btn = ui.button(settings.warehouse["label"], icon=settings.warehouse["icon"], on_click=lambda: ld.show())
     warehouse_btn.on_click(lambda: (ui.navigate.to(f"/{slugify(settings.warehouse['label'])}"), drawer_menu.refresh()) if Cache.width() > 640 else None)
     warehouse_btn.classes(classes).props(props)
@@ -82,9 +102,16 @@ def drawer_menu(
     menu_items: list[MenuItem],
     config: dict[str, str],
     ld: LeftDrawer,
-):
-    """
-    See https://github.com/zauberzeug/nicegui/discussions/5566 for some documentation.
+) -> None:
+    """ Drawer (Left or Right) creation function
+
+    Args:
+        menu_items (list[MenuItem]): A list of all menu items 
+        config (dict[str, str]): #TODO some config 
+        ld: (LeftDrawer): #TODO 
+
+    See https://github.com/zauberzeug/nicegui/discussions/5566 for more documentation.
+
     """
     menu_root = slugify(config["label"])
 

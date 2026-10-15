@@ -10,8 +10,17 @@ from niceshare.ui.grid.grid import create_aggrid
 from niceshare.ui.grid.grid_handlers import handle_click
 from niceshare.ui.helper.reusable_elements import next_fab, save_fab
 
+""" Category Sub-Page Module"""
 
 async def category_page(category: str | None, warehouse: Warehouse, rd: RightDrawer|None) -> None:
+    """Category Sub-Page Creator
+
+    Args:
+        category (str | None): #TODO 
+        warehouse (Warehouse): #TODO
+        rd (RightDrawer|None): #TODO 
+
+    """
     rd.hide() if rd else None
     path = f"{warehouse.name}/{category}" if category else warehouse.name
     ui.page_title(path)
