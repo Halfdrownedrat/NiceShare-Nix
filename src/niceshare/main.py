@@ -1,6 +1,7 @@
 import asyncio
 import locale
 import os
+from pathlib import Path
 
 import jwt
 from nicegui import ui, app
@@ -15,19 +16,36 @@ from niceshare.ui.root import root
 
 # Starts the UI
 def main():
-    warehouses, pages = asyncio.run(load_data_from_dav())
+    LOGGER.debug(".env file found.") if Path(".env").exists() else LOGGER.warn(".env Secret File missing!")
+    #TODO Change to validation for all files maybe?
+    
+    # Load Data either from nextcloud or local if it fails
+    try:
+        warehouses, pages = asyncio.run(load_data_from_dav())
+    except Exception as e:
+        LOGGER.error(f"Failed to load data from nextcloud with error: {e}")
+        LOGGER.debug("Loading Data from local folder!")
+        #TODO Load Data from file 
+    
+    # Load wiki if enabled
     if settings.help["wiki"]:
         wiki = asyncio.run(load_wiki())
     else: wiki = None
+
     if len(os.environ["UI_AUTH_SECRET"]) < 32:
         raise jwt.exceptions.InvalidKeyError("Auth Secret must be at least 32 characters long")
+    
     locale.setlocale(locale.LC_TIME, settings.locale)
     storage_secret = os.environ["UI_STORAGE_SECRET"]
     os.environ.setdefault("NICEGUI_STORAGE_PATH", str(get_path("users")))
+
     app.add_static_file(local_file=get_path("manifest.json"), url_path="/helpers/manifest.json", strict=False)
     app.add_static_file(local_file=get_path("service_worker.js"), url_path="/helpers/service_worker.js", strict=False)
     app.add_static_file(local_file=get_path("favicon.png"), url_path="/favicon.ico", strict=False)
-    app.add_static_files("/splash/", get_path("splash"))
+
+    os.makedirs("./files/splash/",exist_ok=True)
+    os.makedirs("./files/icons/",exist_ok=True)
+    app.add_static_files("/splash/", get_path("splash")) 
     app.add_static_files("/icons/", get_path("icons"))
     ui.run(
         root=lambda: root(warehouses, pages, wiki),

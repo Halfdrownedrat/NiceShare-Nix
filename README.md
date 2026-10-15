@@ -43,6 +43,15 @@ Example Usage here: https://infra.uber.space
 5) Copy files/default_config.yml to config.yml and edit it to your needs
 6) Create a systemd service and set environment variables with your credentials 
 
+# Install on NixOS
+1) Clone this repository
+2) cd into it
+3) Run `nix develop`
+4) Run `uv run niceshare`
+5) Copy files/default_config.yml to config.yml and edit it to your needs
+6) WIP
+
+
 ## Configuration
 ### Config.yml
 #### General settings
