@@ -33,7 +33,7 @@
             echo "Python: $(python --version)"
             echo "Syncing dependencies..."
             uv sync --dev
-            echo "Start with \"niceshare\""
+            echo "Start with \"uv run niceshare\""
           '';
         };
       }
