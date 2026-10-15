@@ -175,14 +175,3 @@ MAIL_PORT=465;
 MAIL_PASSWORD=my super secret mail password;
 MAIL_DOMAIN=mailserver.example.org;
 ```
-
-
-## Roadmap
-### Make config available in admin page
-- [x] create /admin page accessible through /login
-- [ ] create a nice input form for config values
-
-### Make everything even more customizable for different use cases
-- [ ] Option to optimize for many small requests (e.g. overview per Month)
-- [ ] Make Locations/Warehouses customizable so they can be managed by different groups
-- [ ] Add optional map and calendar for use case in cities
