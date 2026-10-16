@@ -15,15 +15,17 @@ from niceshare.ui.helper.markdown import read_page_files
 
 
 async def load_data_from_dav(reload: bool = False) -> Tuple[list[Warehouse], dict[str, str]]:
-    if not ARGS.reload or reload:
-        try:
-            Nextcloud.singleton().pull_files()
-        except:
-            LOGGER.error("Failed to load data from Nextcloud.")
+    if not ARGS.no_nextcloud:
+        if not ARGS.reload or reload: #TODO I think something is off with the way reload is used
+            try:
+                Nextcloud.singleton().pull_files()
+            except:
+                LOGGER.error("Failed to load data from Nextcloud.")
+    else:
+        LOGGER.debug("Nextcloud disabled via argument. Skipping it.")
         
     warehouses: list[Warehouse] = []
     
-    LOGGER.debug("Creating warehouse from data")
     for sheet in settings.data["warehouses"]:
         try:
             warehouse: Warehouse = DB.load(sheet, "inventory")
@@ -33,13 +35,9 @@ async def load_data_from_dav(reload: bool = False) -> Tuple[list[Warehouse], dic
             DB.save(warehouse.name, warehouse.inventory, "inventory")
         warehouses.append(warehouse)
     
-    LOGGER.debug("Creating warehouse from data")
     [await handle_images(w.name, w.inventory) for w in warehouses]
-
-    #TODO what exactl does this do?
     ensure_directory_structure([w.name for w in warehouses])
 
-    LOGGER.debug("Creating pages from data")
     pages: dict[str, str] = {k: v for k, v in read_page_files()}
     return warehouses, pages
 

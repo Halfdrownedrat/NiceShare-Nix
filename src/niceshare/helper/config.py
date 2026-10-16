@@ -48,7 +48,7 @@ class Settings(BaseSettings):
             "help": "help.md",
             "terms": "terms.md",
             "start": "start.md",
-            "inventory": "inventory.ods",
+            "inventory": "inventory.xlsx",
         },
     }
     data: dict[str, str | int | list[str] | dict[str, str]] = {
@@ -74,8 +74,15 @@ class Settings(BaseSettings):
     @property
     def data_filename(self) -> str:
         return self.data["filename"]
-    mail: dict[str, str] = {"mail_to": "hello@example.org", "admin": "admin@example.org"}
-    start: dict[str, str | bool] = {"label": "Start", "icon": "home", "path": "about.md"}
+    mail: dict[str, str] = {
+        "mail_to": "hello@example.org",
+        "admin": "admin@example.org"
+    }
+    start: dict[str, str | bool] = {
+        "label": "Start",
+        "icon": "home",
+        "path": "about.md"
+    }
     help: dict[str, str | bool] = {
         "display": True,
         "wiki": False,

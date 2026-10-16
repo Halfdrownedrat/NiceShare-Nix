@@ -20,7 +20,7 @@ def main():
         LOGGER.debug(".env file found.")
     else:
         LOGGER.warn("Creating default .env file")
-        with open("niceshare/src/.env", 'w') as file:
+        with open("./.env", 'w') as file:
             file.write(
                 """
                     #.env
@@ -28,12 +28,12 @@ def main():
                     NEXTCLOUD_TOKEN=my-super-secret-nextcloud-app-token
                     NEXTCLOUD_USER=exampleuser
                     NEXTCLOUD_DOMAIN=cloud.example.org
-                    
+
                     # UI
                     UI_STORAGE_SECRET=somerandomstringlongenoughtobesafe
                     UI_ADMIN_PASSWORD="some password you will use to log in to admin panel"
                     UI_AUTH_SECRET=somerandomstringlongerthan32characters
-                    
+
                     # Mail
                     MAIL_USER=user@example.org
                     MAIL_PORT=465
@@ -41,9 +41,20 @@ def main():
                     MAIL_DOMAIN=mailserver.example.org
                 """
             )
-    
-    
-    # Fetch Data from nextcloud, then load them locally 
+
+    if ARGS.no_nextcloud:
+        # Creating default files if they do not exist
+        for md in ["help", "warehouse", "start"]:
+            if not Path(getattr(settings,md)["path"]).exists():
+                LOGGER.info(f"Creating starting file {md}.md in files/")
+                with open(f"./files/{getattr(settings,md)["path"]}", 'w') as file:
+                    file.write(f"{md}.md File \n Enter Information for the {md} here")
+        if not Path(settings.form["terms"]["path"]).exists():
+            LOGGER.info(f"Creating starting file form terms.md in files/")
+            with open(f"./files/{settings.form["terms"]["path"]}", 'w') as file:
+                file.write(f"{md}.md File \n Enter Information for the form terms here")
+
+    # Attempt to fetch Data from nextcloud, then load them locally 
     warehouses, pages = asyncio.run(load_data_from_dav())
     
     # Load wiki if enabled

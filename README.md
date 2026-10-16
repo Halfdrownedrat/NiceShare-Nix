@@ -164,40 +164,38 @@ settings: # Only visible for admins and editors
 ```
 
 ### Inventur.xlsx 
-Defined by `Config.yml`
+Defined by `config.yml` Names need completly match between Excel file and config.
 
-Erste Zeile als csv (Werte in Klammern sind optional):
-Kategorie, Objekt, Zahl, Packung, (kg, Kommentar, Link, Bild)
+Each `.xlsx` is an Inventory. Each Sheet in the excel is a warehouse. The columns are the values from the columns dict. (Shelf, Category, Name, ...)
 
-Kategorie = Stichwort, das im Menü erscheint (muss bei jeder Zeile wieder stehen, also für jedes Objekt der Kategorie)
-Objekt = Name des Gegenstandes
-
+Optional Fields are: #TODO 
 
 ### /files/splash 
-Das was ggf. Noch rumnervt wenn es fehlt ist das /files/splash directory für die Progressive Web App. Da kannst du in main.py einfach das app.add_static_files zu auskommentieren.
+Empty Folders are being created to avoid error. 
 
-Oder du generierst dir den halt online:
-https://www.pwa-icon-generator.com/splash-screen-generator/
+Later #TODO 
+
+Generted from: https://www.pwa-icon-generator.com/splash-screen-generator/
 
 
 ### Environment Variables
 ```dotenv
-NEXTCLOUD_TOKEN=my-super-secret-nextcloud-app-token;
-NEXTCLOUD_USER=exampleuser;
-NEXTCLOUD_DOMAIN=cloud.example.org;
+NEXTCLOUD_TOKEN=my-super-secret-nextcloud-app-token
+NEXTCLOUD_USER=exampleuser
+NEXTCLOUD_DOMAIN=cloud.example.org
 ```
 
 #### UI
 ```dotenv
-UI_STORAGE_SECRET=somerandomstringlongenoughtobesafe;
-UI_ADMIN_PASSWORD=some password you will use to log in to admin panel;
-UI_AUTH_SECRET=somerandomstringlongerthan32characters;
+UI_STORAGE_SECRET=somerandomstringlongenoughtobesafe
+UI_ADMIN_PASSWORD=some password you will use to log in to admin panel
+UI_AUTH_SECRET=somerandomstringlongerthan32characters
 ```
 
 #### Mail
 ``` dotenv
-MAIL_USER=user@example.org;
-MAIL_PORT=465;
-MAIL_PASSWORD=my super secret mail password;
-MAIL_DOMAIN=mailserver.example.org;
+MAIL_USER=user@example.org
+MAIL_PORT=465
+MAIL_PASSWORD=my super secret mail password
+MAIL_DOMAIN=mailserver.example.org
 ```
