@@ -25,27 +25,11 @@ def read_inventory(sheet: str) -> Warehouse:
 
     # TODO Change sheet to Path directly
     inventory = get_path(settings.data_filename)
-    # Attempts to parse the warehouse 
+    # NOTE: Removed commented out part for now
     try:
-        """
-        LOGGER.debug(f"Reading sheet {sheet} from {inventory.name}...")
-        match inventory.suffix:
-            case ".duckdb":
-                with duckdb.connect(database=inventory, read_only=True) as con:
-                    df = con.query(f"SELECT * FROM {sheet}").pl()
-            case ".xlsx":
-                df = pl.read_excel(source=inventory, sheet_name=sheet, engine="openpyxl", drop_empty_cols=False)
-            case ".ods":
-                df = pl.read_ods(source=inventory, sheet_name=sheet, drop_empty_cols=False)
-            case ".csv":
-                df = pl.read_csv(source=inventory)
-            case _:
-                LOGGER.warning(f"This file type is not supported: {inventory.suffix}")
-                exit(1)
-        """
-        df = pl.read_excel(source=inventory, sheet_name=sheet, engine="openpyxl", drop_empty_cols=False)
+        df = pl.read_excel(source=inventory.with_suffix(".xlsx"), sheet_name=sheet, engine="openpyxl", drop_empty_cols=False)
         return Warehouse.create(sheet, df)
-    except (NoDataError, IOException, CatalogException) as e:
+    except (FileNotFoundError, NoDataError, IOException, CatalogException) as e:
         LOGGER.warning(f"Unable to read {sheet} from {inventory.name}. Full error: {e}", exc_info=True)
         exit(1)
 

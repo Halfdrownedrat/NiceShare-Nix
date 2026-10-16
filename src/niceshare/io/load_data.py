@@ -16,7 +16,7 @@ from niceshare.ui.helper.markdown import read_page_files
 """ Module for loading data from Nextcloud usign CalDav """
 
 async def load_data_from_dav(reload: bool = False) -> Tuple[list[Warehouse], dict[str, str]]:
-    """Load Data from nexcloud using dav
+    """Load Data from nexcloud using dav.
     
     Args:
         reload (bool): Reload Overwrite over Argparser value
@@ -25,15 +25,21 @@ async def load_data_from_dav(reload: bool = False) -> Tuple[list[Warehouse], dic
         Tuple[list[Warehouse], dict[str, str]]: #TODO A lot
     """
 
-    #TODO How does reload work?
-
-    if not ARGS.reload or reload:
-        Nextcloud.singleton().pull_files()
+    if not ARGS.no_nextcloud:
+        if not ARGS.reload or reload: #TODO I think something is off with the way reload is used
+            try:
+                Nextcloud.singleton().pull_files()
+            except:
+                LOGGER.error("Failed to load data from Nextcloud.")
+    else:
+        LOGGER.debug("Nextcloud disabled via argument. Skipping it.")
+        
     warehouses: list[Warehouse] = []
+    
     for sheet in settings.data["warehouses"]:
         try:
             warehouse: Warehouse = DB.load(sheet, "inventory")
-        except IOException, CatalogException:
+        except (IOException, CatalogException, FileNotFoundError):
             LOGGER.warning(f"Could not load {sheet} from database. Trying to import it.")
             warehouse: Warehouse = read_inventory(sheet)
             DB.save(warehouse.name, warehouse.inventory, "inventory")
@@ -41,6 +47,7 @@ async def load_data_from_dav(reload: bool = False) -> Tuple[list[Warehouse], dic
 
     [await handle_images(w.name, w.inventory) for w in warehouses]
     ensure_directory_structure([w.name for w in warehouses])
+
     pages: dict[str, str] = {k: v for k, v in read_page_files()}
     return warehouses, pages
 
