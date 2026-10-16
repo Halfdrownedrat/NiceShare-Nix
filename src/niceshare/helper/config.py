@@ -140,6 +140,7 @@ class Settings(BaseSettings):
             warning("File not Found - Loading default-config:", config_file)
         except yaml.YAMLError as e:
             exception("Error in config file: \n" + e.args[0]), file.close()
+        # Load Default if customized is failing 
         with open(default_config_file, "r") as file:
             return Settings(**yaml.load(file, yaml.SafeLoader))
 

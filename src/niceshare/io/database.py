@@ -24,6 +24,13 @@ class DB:
     def load(cls, name: str, db: Literal["inventory", "request"]) -> Warehouse:
         LOGGER.debug(f"Trying to load {name} from database {cls.Inventory_DB.name}...")
         file = cls.Inventory_DB if db == "inventory" else cls.Request_DB
+        
+        if not file.exists():
+            LOGGER.error("Database inventory does not exist")
+            raise FileNotFoundError
+            
         with duckdb.connect(database=file, read_only=True) as con:
+            # Creates Polar Dataframe from read-only duckdb database 
+            # TODO WHY Tf
             df = con.query(f"SELECT * FROM {name}").pl()
             return Warehouse(name, df)

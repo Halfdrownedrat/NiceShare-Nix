@@ -16,16 +16,35 @@ from niceshare.ui.root import root
 
 # Starts the UI
 def main():
-    LOGGER.debug(".env file found.") if Path(".env").exists() else LOGGER.warn(".env Secret File missing!")
-    #TODO Change to validation for all files maybe?
+    if Path(".env").exists():
+        LOGGER.debug(".env file found.")
+    else:
+        LOGGER.warn("Creating default .env file")
+        with open("niceshare/src/.env", 'w') as file:
+            file.write(
+                """
+                    #.env
+                    # Nextcloud
+                    NEXTCLOUD_TOKEN=my-super-secret-nextcloud-app-token
+                    NEXTCLOUD_USER=exampleuser
+                    NEXTCLOUD_DOMAIN=cloud.example.org
+                    
+                    # UI
+                    UI_STORAGE_SECRET=somerandomstringlongenoughtobesafe
+                    UI_ADMIN_PASSWORD="some password you will use to log in to admin panel"
+                    UI_AUTH_SECRET=somerandomstringlongerthan32characters
+                    
+                    # Mail
+                    MAIL_USER=user@example.org
+                    MAIL_PORT=465
+                    MAIL_PASSWORD="my super secret mail password"
+                    MAIL_DOMAIN=mailserver.example.org
+                """
+            )
     
-    # Load Data either from nextcloud or local if it fails
-    try:
-        warehouses, pages = asyncio.run(load_data_from_dav())
-    except Exception as e:
-        LOGGER.error(f"Failed to load data from nextcloud with error: {e}")
-        LOGGER.debug("Loading Data from local folder!")
-        #TODO Load Data from file 
+    
+    # Fetch Data from nextcloud, then load them locally 
+    warehouses, pages = asyncio.run(load_data_from_dav())
     
     # Load wiki if enabled
     if settings.help["wiki"]:

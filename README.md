@@ -163,6 +163,23 @@ settings: # Only visible for admins and editors
   label: 'Einstellungen'
 ```
 
+### Inventur.xlsx 
+Defined by `Config.yml`
+
+Erste Zeile als csv (Werte in Klammern sind optional):
+Kategorie, Objekt, Zahl, Packung, (kg, Kommentar, Link, Bild)
+
+Kategorie = Stichwort, das im Menü erscheint (muss bei jeder Zeile wieder stehen, also für jedes Objekt der Kategorie)
+Objekt = Name des Gegenstandes
+
+
+### /files/splash 
+Das was ggf. Noch rumnervt wenn es fehlt ist das /files/splash directory für die Progressive Web App. Da kannst du in main.py einfach das app.add_static_files zu auskommentieren.
+
+Oder du generierst dir den halt online:
+https://www.pwa-icon-generator.com/splash-screen-generator/
+
+
 ### Environment Variables
 ```dotenv
 NEXTCLOUD_TOKEN=my-super-secret-nextcloud-app-token;

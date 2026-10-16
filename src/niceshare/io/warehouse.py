@@ -55,19 +55,15 @@ class Warehouse(MenuItem):
 
     @property
     def categories(self) -> list[str]:
+        c = [settings.warehouse["selection"], self.name]
         try:
-            c: list[str] = sorted(self.inventory[settings.columns["category"]].unique())
-            if len(c) == 1:
-                c[0] = self.name
-            else:
-                c.insert(1, self.name)
+            c.extend(sorted(self.inventory[settings.columns["category"]].unique()))
         except (AttributeError, TypeError):
             raise AttributeError(
                 "It seems like you have used a category that is not sortable."
                 "\nPlease review the categories used in the category column of the inventory file."
                 "\nCheck for empty cells, and stuff like numbers, non-ascii-characters, etc."
             )
-        c.insert(0, settings.warehouse["selection"])
         return c
 
     def selected(self) -> DataFrame:
