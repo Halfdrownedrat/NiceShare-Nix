@@ -50,13 +50,13 @@ def main():
     if ARGS.no_nextcloud:
         # Creating default files if they do not exist
         for md in ["help", "warehouse", "start"]:
-            if not Path(getattr(settings,md)["path"]).exists():
-                LOGGER.info(f"Creating starting file {md}.md in files/")
-                with open(f"./files/{getattr(settings,md)["path"]}", 'w') as file:
+            if not Path("/files/pages/" + getattr(settings,md)["path"]).exists():
+                LOGGER.info(f"Creating starting file {md}.md in files/pages/")
+                with open(f"./files/pages/{getattr(settings,md)["path"]}", 'w') as file:
                     file.write(f"{md}.md File \n Enter Information for the {md} here")
-        if not Path(settings.form["terms"]["path"]).exists():
-            LOGGER.info(f"Creating starting file form terms.md in files/")
-            with open(f"./files/{settings.form["terms"]["path"]}", 'w') as file:
+        if not Path("/files/pages/" + settings.form["terms"]["path"]).exists():
+            LOGGER.info(f"Creating starting file form terms.md in files/pages")
+            with open(f"./files/pages/{settings.form["terms"]["path"]}", 'w') as file:
                 file.write(f"{md}.md File \n Enter Information for the form terms here")
 
     # Attempt to fetch Data from nextcloud, then load them locally 
