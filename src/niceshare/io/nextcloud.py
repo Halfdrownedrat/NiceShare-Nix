@@ -103,14 +103,18 @@ class Nextcloud(Client):
             LOGGER.warning(f"Cannot connect to {self._domain}.\nPlease check your Internet Connection.")
             self.shut_down_if_missing_file(local)
 
-    def push_file(self, file: Path) -> None:
+    def push_file(self, file: Path, force:bool = True) -> None:
         """Push File to remote (Update or Upload) 
 
         Args:
             file (Path): File to upload 
+            force (bool): If any existign files should be overwritten, default is True
         """
-
-        #TODO Can it overwrite existing files?
-        
-        self.upload_file(get_path(file.name), "/".join((self.remote_dir, file.name)), overwrite=True)
-        LOGGER.info(f"Successfully pushed {file.name} to remote directory.")
+        try:
+            if force:
+                self.upload_file(get_path(file.name), "/".join((self.remote_dir, file.name)), overwrite=True)
+            else:
+                self.upload_file(get_path(file.name), "/".join((self.remote_dir, file.name)), overwrite=False)
+            LOGGER.info(f"Successfully pushed {file.name} to remote directory.")
+        except Exception as e:
+            LOGGER.error(f"Failed to upload fail {file.name} to remote with error: {e}")

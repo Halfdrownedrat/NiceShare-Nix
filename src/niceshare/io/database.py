@@ -16,8 +16,8 @@ class DB:
     """
 
     # Path constants to the file
-    Inventory_DB = get_path(settings.data_filename).with_suffix(".duckdb")
-    Request_DB = get_path(settings.requests["filename"]).with_suffix(".duckdb")
+    INVENTORY_DB = get_path(settings.data_filename).with_suffix(".duckdb") # Duckdb file for inventory managment
+    REQUEST_DB = get_path(settings.requests["filename"]).with_suffix(".duckdb") # Duckdb file for request managment
 
     @classmethod
     def save(cls, name: str, df: DataFrame, db: Literal["inventory", "request"]) -> None:
@@ -31,7 +31,7 @@ class DB:
 
         """
 
-        file = cls.Inventory_DB if db == "inventory" else cls.Request_DB
+        file = cls.INVENTORY_DB if db == "inventory" else cls.REQUEST_DB
         with duckdb.connect(file, read_only=False) as con:
             con.sql(f"DROP TABLE IF EXISTS {name}")
             con.sql(f"CREATE TABLE {name} AS SELECT * FROM df")
@@ -51,8 +51,8 @@ class DB:
 
         """
         
-        LOGGER.debug(f"Trying to load {name} from database {cls.Inventory_DB.name}...")
-        file = cls.Inventory_DB if db == "inventory" else cls.Request_DB
+        LOGGER.debug(f"Trying to load {name} from database {cls.INVENTORY_DB.name}...")
+        file = cls.INVENTORY_DB if db == "inventory" else cls.REQUEST_DB
         
         if not file.exists():
             LOGGER.error("Database inventory does not exist")

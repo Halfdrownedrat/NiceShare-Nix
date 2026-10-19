@@ -3,9 +3,14 @@ from logging import Logger
 
 import niceshare
 
+""" Logger Module"""
 
 class RelativeSeconds(logging.Formatter):
+    """#TODO 
+    """
     def format(self, record):
+        """#TODO
+        """
         record.relativeCreated = record.relativeCreated // 1000
         return super().format(record)
 

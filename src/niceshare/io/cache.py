@@ -3,6 +3,7 @@ from nicegui.observables import ObservableList, ObservableDict
 
 from niceshare.helper.i18n import i18n
 
+#TODO wtf
 
 class Cache:
     def __init__(self, warehouses):

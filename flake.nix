@@ -23,6 +23,7 @@
             uv
             tk
             gcc-unwrapped
+            ruff 
           ];
 
           # Potential issue with loading from env, replace later with better reading or secret managment
