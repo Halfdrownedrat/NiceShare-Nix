@@ -173,10 +173,11 @@ Optional Fields are: #TODO
 ### /files/splash 
 Empty Folders are being created to avoid error. 
 
-Later #TODO 
+Folder content gets generted here: https://www.pwa-icon-generator.com/splash-screen-generator/
+The other files can be discarded #TODO can they?
 
-Generted from: https://www.pwa-icon-generator.com/splash-screen-generator/
-
+### Markdown pages 
+Placeholder pages are created if the user hasn't created any. All pages need to be in `files/pages/`. The naming scheme is definied in the `config.yml`.
 
 ### Environment Variables
 ```dotenv
