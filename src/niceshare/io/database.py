@@ -24,10 +24,11 @@ class DB:
         """ Save Data to Database 
 
         Args:
-            cls: #TODO
-            name (str): #TODO
-            df (DataFrame): #TODO
-            db (Literal["inventory", "request"]): #TODO
+            name (str): Name of the inventory / request 
+            df (DataFrame): Pandas Dataframe with warehouse/request data to save
+            db (Literal["inventory", "request"]): Storing inventory or request data Option
+
+        #NOTE No Validation / Safeguard happens for preventing request data to be loadet into the inventory db.
 
         """
 
@@ -37,17 +38,15 @@ class DB:
             con.sql(f"CREATE TABLE {name} AS SELECT * FROM df")
 
     @classmethod
-    def load(cls, name: str, db: Literal["inventory", "request"]) -> Warehouse:
-        """ Load Data from Database 
+    def load_warehouse(cls, name: str, db: Literal["inventory", "request"]) -> Warehouse:
+        """ Load and construct Warehouse from Database 
 
         Args:
-            cls: #TODO
-            name (str): #TODO
-            df (DataFrame): #TODO
-            db (Literal["inventory", "request"]): #TODO
+            name (str): Name of the Warehouse to load
+            db (Literal["inventory", "request"]): If the warehouse should be loaded from inventory or request db
 
         Returns:
-            Warehouse: #TODO
+            Warehouse: The Warehouse object 
 
         """
         
@@ -60,7 +59,7 @@ class DB:
             
         with duckdb.connect(database=file, read_only=True) as con:
             # Creates Polar Dataframe from read-only duckdb database 
-            # TODO WHY Tf
+            # TODO WHY, why is this so cursed
             df = con.query(f"SELECT * FROM {name}").pl()
             return Warehouse(name, df)
 

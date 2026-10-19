@@ -38,7 +38,7 @@ async def load_data_from_dav(reload: bool = False) -> Tuple[list[Warehouse], dic
     
     for sheet in settings.data["warehouses"]:
         try:
-            warehouse: Warehouse = DB.load(sheet, "inventory")
+            warehouse: Warehouse = DB.load_warehouse(sheet, "inventory")
         except (IOException, CatalogException, FileNotFoundError):
             LOGGER.warning(f"Could not load {sheet} from database. Trying to import it.")
             warehouse: Warehouse = read_inventory(sheet)

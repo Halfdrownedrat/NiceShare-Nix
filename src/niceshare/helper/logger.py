@@ -6,16 +6,18 @@ import niceshare
 """ Logger Module"""
 
 class RelativeSeconds(logging.Formatter):
-    """#TODO 
+    """Logger formaating overwrite to display seconds (instead of miliseconds).
     """
     def format(self, record):
-        """#TODO
+        """Convert miliseconds to seconds.
         """
         record.relativeCreated = record.relativeCreated // 1000
         return super().format(record)
 
 
-formatter = RelativeSeconds("%(relativeCreated)ds %(levelname)s %(name)s.%(module)s.%(funcName)s: %(message)s")
+formatter = RelativeSeconds(
+    "%(relativeCreated)ds %(levelname)s %(name)s.%(module)s.%(funcName)s: %(message)s"
+    )
 
 # Get Logger and set log level
 logging.basicConfig()

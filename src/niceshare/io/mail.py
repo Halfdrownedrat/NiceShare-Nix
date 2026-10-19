@@ -21,7 +21,7 @@ from niceshare.helper.logger import LOGGER
 """ Mail Handler Module"""
 
 class RequestType(StrEnum):
-    """Request Type Enum
+    """Request Type Enum.
     """
     request = "request"
     update = "update"
@@ -30,7 +30,7 @@ class RequestType(StrEnum):
 
 
 class MailServer(BaseSettings):
-    """Reads basic Mail Settings from .env file
+    """Reads basic Mail Settings from .env file.
     """
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="UTF-8", env_prefix="MAIL_", extra="ignore")
 
@@ -71,7 +71,7 @@ def send_mail(
         LOGGER.debug("Logging into SMTP Client with credentials...")
         smtp.login(mail_server.user, mail_server.password)
         mail = MIMEMultipart("mixed")
-        mail.add_header("Subject", create_subject(request, request_type))
+        mail.add_header("Subject", _create_subject(request, request_type))
         mail.add_header("From", f"{email}")
         mail.add_header("Date", formatdate(localtime=True))
         mail.add_header("Message-ID", f"<{user_id}-{request.get(request_type)}@{mail_server.domain}>")
@@ -83,7 +83,7 @@ def send_mail(
         mail.add_header("Return-Path", mail_server.user)
         mail.add_header("Reply-To", f"{email}")
         # mail.attach(MIMEText(create_text("text", request, exception), "plain"))
-        mail.attach(MIMEText(create_text("html", request, exception), "html"))
+        mail.attach(MIMEText(_create_text("html", request, exception), "html"))
 
         # Attaching file as payload 
         if filename is not None:
@@ -104,16 +104,38 @@ def send_mail(
         smtp.quit()
 
 
-def create_subject(request: dict[str, str | dict[str, str]], rtype: RequestType) -> str:
+def _create_subject(request: dict[str, str | dict[str, str]], rtype: RequestType) -> str:
+    """ Email Subject Creator.
+    
+    Args:
+        request (dict[str, str | dict[str, str]]): The request dict 
+        rtype (RequestType): The Request type 
+    
+    Returns:
+        str: Thre request converted into a subject line with current date
+
+    """
     start, end, month, year = convert_dates(request.get("dates"))
     if rtype == RequestType.update or rtype == RequestType.delete:
         return f"Re: [{i18n.get(f'mail.{rtype}')}] {request.get('name')} {month} {year}"
     return f"[{i18n.get(f'mail.{rtype}')}] {request.get('name')} {month} {year}"
 
 
-def create_text(
+def _create_text(
     ttype: Literal["text", "html"], request: dict[str, str | float | dict[str, str]], exception: Exception
 ) -> str:
+    """The Email main body text Creator.
+
+    Args:
+        ttype (Literal["text", "html"]): If the text is using plain text or html
+        request (dict[str, str | float | dict[str, str]]): The request dict
+        exception (Exception): #TODO 
+    
+    Returns:
+        str: The mail body 
+    
+    """
+
     newline = "\n" if ttype == "text" else "<br>"
     add: list[str] = []
     for key, value in request.items():

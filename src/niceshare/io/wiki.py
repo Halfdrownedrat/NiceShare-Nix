@@ -13,7 +13,6 @@ from niceshare.helper.paths import get_path
 
 WIKI_ROOT = slugify(settings.help["label"])
 
-
 class MenuItem(Protocol):
     name: str
 

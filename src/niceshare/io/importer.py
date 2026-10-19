@@ -12,8 +12,9 @@ from niceshare.io.warehouse import Warehouse
 """ Data Importer for Warehouses and images"""
 
 def read_inventory(sheet: str) -> Warehouse:
-    """Creates Warehouse from string 
-    Handles file formats: duckdb, xlsx, ods, csv
+    """Creates Warehouse from an xlsx (Excel) sheet 
+
+    Handles file formats: xlsx
 
     Args:
         sheet (str): The Warehouse Data File (Path)
@@ -22,10 +23,8 @@ def read_inventory(sheet: str) -> Warehouse:
         Warehouse: Newly created warehouse object 
 
     """
-
-    # TODO Change sheet to Path directly
     inventory = get_path(settings.data_filename)
-    # NOTE: Removed commented out part for now
+    # NOTE: Removed commented out part for now (not implemented file types)
     try:
         df = pl.read_excel(source=inventory.with_suffix(".xlsx"), sheet_name=sheet, engine="openpyxl", drop_empty_cols=False)
         return Warehouse.create(sheet, df)

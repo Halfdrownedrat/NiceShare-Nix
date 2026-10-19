@@ -3,10 +3,18 @@ from nicegui.observables import ObservableList, ObservableDict
 
 from niceshare.helper.i18n import i18n
 
-#TODO wtf
+""" Module for caching stuff."""
 
 class Cache:
-    def __init__(self, warehouses):
+    """ Cache Class for storing data in memory (browser tab).
+    """
+    def __init__(self, warehouses:list[Warehouse]):
+        """ Init for Cache
+
+        Args:
+            warehouses (list[Warehouse]): A list of warehouses 
+
+        """
         app.storage.user.indent = True
         app.storage.user.setdefault("Total", 0)
         app.storage.user.setdefault("width", 0)
@@ -41,6 +49,7 @@ class Cache:
             app.storage.user["edited"].update({warehouse.name: {}}) if not self.edited(warehouse.name) else None
             app.storage.user["amounts"].update({warehouse.name: {}}) if not self.amounts(warehouse.name) else None
 
+    #TODO Do we want to doument every getter? - P
     @classmethod
     def total(cls) -> int:
         return int(app.storage.user["Total"])
