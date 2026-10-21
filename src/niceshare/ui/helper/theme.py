@@ -1,3 +1,4 @@
+"""Them class / handling for ui."""
 from typing import Self
 
 from nicegui import ui
@@ -7,9 +8,16 @@ from niceshare.helper.config import settings
 
 # Methods to handle Theme
 class Theme:
+    """Theme styling class."""
     instance = None
 
     def __init__(self, config: dict[str, str]) -> None:
+        """Theme init.
+        
+        Args:
+            config (dict[str,str]):
+
+        """
         self.primary = config.get("primary")
         self.secondary = config.get("secondary")
         self.accent = config.get("accent")
@@ -19,11 +27,18 @@ class Theme:
 
     @classmethod
     def singleton(cls) -> Self:
+        """#TODO.
+
+        Returns:
+            Self: 
+
+        """
         if not cls.instance:
             cls.instance = Theme(config=settings.theme)
         return cls.instance
 
     def set_colors(self):
+        """Sets the colors for the theme."""
         ui.colors(
             primary=self.primary,
             secondary=self.secondary,

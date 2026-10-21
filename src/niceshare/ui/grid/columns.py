@@ -1,5 +1,7 @@
+"""Columns Module."""
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, Callable
+from typing import Any
 
 from niceshare.helper.config import settings
 
@@ -8,6 +10,17 @@ type colDefFunction = Callable[[colSettings, bool, bool], dict[str, Any]]
 
 
 def col_defs(cart: bool, admin: bool, columns=settings.columns) -> list[dict[str, Any]]:
+    """#TODO.
+
+    Args:
+        cart (bool):
+        admin (bool):
+        columns:
+
+    Returns:
+        list[dict[str, Any]]:
+
+    """
     return [col_fns.get(c)(columns, cart, admin) if col_fns.get(c) else {"hide": True} for c in columns.keys()]
 
 
@@ -15,7 +28,24 @@ col_fns = {}
 
 
 def register_column(name: str) -> Callable[[colDefFunction], colDefFunction]:
+    """#TODO.
+
+    Args:
+        name (str):
+
+    Returns:
+        Callable[[colDefFunction], colDefFunction]: 
+    
+    """
     def decorator(func: colDefFunction) -> colDefFunction:
+        """#TODO.
+
+        Args:
+            func (colDefFunction):
+
+        Returns:
+            colDefFunction
+        """
         @wraps(func)
         def wrapper(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
             return func(columns, cart, admin)
@@ -27,6 +57,12 @@ def register_column(name: str) -> Callable[[colDefFunction], colDefFunction]:
 
 
 def default_col_defs() -> dict[str, Any]:
+    """#TODO.
+
+    Returns:
+        dict[str, Any]:
+    
+    """
     return {
         "editable": False,
         "suppressSizeToFit": True,
@@ -42,6 +78,16 @@ def default_col_defs() -> dict[str, Any]:
 
 @register_column("image")
 def image_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
+    """#TODO.
+
+    Args:
+        columns (colSettings):
+        cart (bool):
+        admin (bool):
+
+    Returns:
+        dict[str, Any]
+    """
     return {
         "colId": columns["image"],
         "editable": False,
@@ -59,6 +105,17 @@ def image_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
 
 @register_column("object")
 def object_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
+    """#TODO.
+
+    Args:
+        columns (colSettings):
+        cart (bool):
+        admin (bool):
+
+    Returns:
+        dict[str, Any]
+    
+    """
     return {
         "field": columns["object"],
         "filter": not cart,
@@ -71,20 +128,42 @@ def object_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
     }
 
 
-# Not used at the moment
-def description_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
-    return {
-        "colId": columns["type"],
-        "field": columns["type"],
-        "suppressSizeToFit": False,
-        "wrapText": True,
-        "autoHeight": True,
-        "sortable": False,
-    }
+# TODO Not used at the moment
+#def description_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
+#    """#TODO.
+#
+    #Args:
+#        columns (colSettings):
+#        cart (bool):
+#        admin (bool):
+#
+    #Returns:
+#        dict[str, Any]
+#    
+#    """
+#    return {
+#        "colId": columns["type"],
+#        "field": columns["type"],
+#        "suppressSizeToFit": False,
+#        "wrapText": True,
+#        "autoHeight": True,
+#        "sortable": False,
+#    }
 
 
 @register_column("weight")
 def weight_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
+    """#TODO.
+
+    Args:
+        columns (colSettings):
+        cart (bool):
+        admin (bool):
+
+    Returns:
+        dict[str, Any]
+    
+    """
     return {
         "field": columns["weight"],
         ":valueFormatter": "(p) => p.value != null ? p.value + ' kg' : null",
@@ -99,6 +178,17 @@ def weight_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
 
 @register_column("count")
 def count_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
+    """#TODO.
+
+    Args:
+        columns (colSettings):
+        cart (bool):
+        admin (bool):
+
+    Returns:
+        dict[str, Any]
+    
+    """
     return {
         "colId": columns["count"],
         ":valueGetter": f"(p) => p.data.{columns['count']}",
@@ -120,6 +210,17 @@ def count_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
 
 @register_column("pack")
 def pack_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
+    """#TODO.
+
+    Args:
+        columns (colSettings):
+        cart (bool):
+        admin (bool):
+
+    Returns:
+        dict[str, Any]
+    
+    """
     return {
         "field": columns["pack"],
         "lockPosition": "left" if cart else "",
@@ -128,21 +229,43 @@ def pack_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
     }
 
 
-# Not Used at the moment
-def delete_col() -> dict[str, Any]:
-    return {
-        "colId": "add_delete",
-        # ":editable": f"(p) => p.node.rowPinned ? true : false",
-        ":valueGetter": "(p) => p.node.rowPinned ? 'added' : 'deleted'",
-        ":cellRenderer": '''(p) => p.node.rowPinned ?
-                 "<span class='material-icons-outlined' style='font-size:28px'>add</span>" :
-                  "<span class='material-icons-outlined' style='font-size:28px'>delete</span>"''',
-        "maxWidth": 60,
-    }
+# TODO Not Used at the moment
+#def delete_col() -> dict[str, Any]:
+#    """#TODO.
+#
+#    Args:
+#        columns (colSettings):
+#        cart (bool):
+#        admin (bool):
+#
+#    Returns:
+#        dict[str, Any]
+#    
+#    """
+#    return {
+#        "colId": "add_delete",
+#        # ":editable": f"(p) => p.node.rowPinned ? true : false",
+#        ":valueGetter": "(p) => p.node.rowPinned ? 'added' : 'deleted'",
+#        ":cellRenderer": '''(p) => p.node.rowPinned ?
+#                 "<span class='material-icons-outlined' style='font-size:28px'>add</span>" :
+#                  "<span class='material-icons-outlined' style='font-size:28px'>delete</span>"''',
+#        "maxWidth": 60,
+#    }
 
 
 @register_column("total_weight")
 def total_weight_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
+    """#TODO.
+
+    Args:
+        columns (colSettings):
+        cart (bool):
+        admin (bool):
+
+    Returns:
+        dict[str, Any]
+    
+    """
     return {
         "colId": columns["total_weight"],
         "field": columns["total_weight"],

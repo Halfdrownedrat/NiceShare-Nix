@@ -1,4 +1,6 @@
-from nicegui import json, app, ui
+"""Magic Link Handler."""
+from filepath import Path
+from nicegui import app, json, ui
 from slugify import slugify
 
 from niceshare.helper.config import settings
@@ -6,12 +8,24 @@ from niceshare.helper.paths import get_path
 
 
 def get_magic_link() -> str:
+    """Getter for a magic link.
+
+    Returns:
+        str: The link
+
+    """
     return f"{settings.domain}/{slugify(settings.cart['label'])}?id={app.storage.browser['id']}"
 
 
 def load_data_from_magic_link(new_id: str) -> None:
+    """Load data from magic link.
+
+    Args:
+        new_id (str):
+
+    """
     try:
-        with open(get_path(f"storage-user-{new_id}.json", "users"), "r") as f:
+        with Path.open(get_path(f"storage-user-{new_id}.json", "users"), "r") as f:
             app.storage.user.update(json.loads(f.read()))
             app.storage.browser.update({"id": new_id})
             ui.navigate.reload()

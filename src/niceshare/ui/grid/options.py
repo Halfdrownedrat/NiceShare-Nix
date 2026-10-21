@@ -1,7 +1,18 @@
-from niceshare.ui.grid.columns import default_col_defs, col_defs
+"""Options for Gird Styling and display."""
+from niceshare.ui.grid.columns import col_defs, default_col_defs
 
 
 def options(cart: bool, admin: bool) -> dict:
+    """#TODO.
+    
+    Args:
+        cart (bool):
+        admin (bool):
+    
+    Returns.
+        dict: 
+    
+    """
     return {
         "selectionColumnDef": {"hide": cart, "maxWidth": 35, "sortable": True},
         "columnDefs": col_defs(cart, admin),

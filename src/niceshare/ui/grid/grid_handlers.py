@@ -1,3 +1,4 @@
+"""Grid Handler Module."""
 from contextlib import suppress
 
 import polars as pl
@@ -9,7 +10,7 @@ from polars import DataFrame
 
 from niceshare.helper.config import settings
 from niceshare.helper.i18n import i18n
-from niceshare.helper.images import upload_img, delete_img
+from niceshare.helper.images import delete_img, upload_img
 from niceshare.io.cache import Cache
 from niceshare.io.warehouse import Warehouse
 from niceshare.ui.auth import authenticate_user
@@ -17,7 +18,16 @@ from niceshare.ui.helper.markdown import render_markdown
 from niceshare.ui.helper.validators import validate_url
 
 
-async def update_amount(grid: AgGrid, name:str, df: DataFrame, event: GenericEventArguments):
+async def update_amount(grid: AgGrid, name:str, df: DataFrame, event: GenericEventArguments) -> None:
+    """#TODO.
+
+    Args:
+        grid (AgGrid):
+        name (str):
+        df (DataFrame):
+        event (GenericEventArguments):
+
+    """
     with suppress(KeyError):
         if event.args["rowPinned"]:
             return
@@ -36,7 +46,15 @@ async def update_amount(grid: AgGrid, name:str, df: DataFrame, event: GenericEve
     Cache.set_weight(name, await total_weight(name, df))
 
 
-def handle_select(name: str, event: GenericEventArguments, grid: AgGrid):
+def handle_select(name: str, event: GenericEventArguments, grid: AgGrid) -> None:
+    """#TODO.
+
+    Args:
+        name (str):
+        event (GenericEventArguments):
+        grid (AGrid):
+
+    """
     with suppress(KeyError):
         if event.args["source"] == "api":
             return
@@ -51,7 +69,15 @@ def handle_select(name: str, event: GenericEventArguments, grid: AgGrid):
         grid.run_row_method(row_id, "setSelected", False)
 
 
-def handle_click(warehouse:Warehouse, grid: AgGrid, event: GenericEventArguments):
+def handle_click(warehouse:Warehouse, grid: AgGrid, event: GenericEventArguments) -> None:
+    """#TODO.
+
+    Args:
+        warehouse (Warehouse):
+        grid (AgGrid):
+        event (GenericEventArguments):
+
+    """
     columns = settings.columns
     data = event.args["data"]
     admin = authenticate_user()
@@ -68,7 +94,17 @@ def handle_click(warehouse:Warehouse, grid: AgGrid, event: GenericEventArguments
     except KeyError:
         handle_select(warehouse.name, event, grid) if not admin else None
 
-def info_popup(warehouse:Warehouse, event_args: dict, grid: AgGrid):
+def info_popup(warehouse:Warehouse, event_args: dict, grid: AgGrid) -> Dialog:
+    """#TODO.
+
+    Args:
+        warehouse (Warehouse):
+        grid (AgGrid):
+        event (GenericEventArguments):
+
+    Returns:
+        Dialog: 
+    """
     admin = authenticate_user()
     data = event_args["data"]
     with ui.dialog(value=True) as dia:
@@ -77,7 +113,15 @@ def info_popup(warehouse:Warehouse, event_args: dict, grid: AgGrid):
     return dia
 
 @ui.refreshable
-def dia_content(dia:Dialog, name: str, data: dict[str, str], admin: bool):
+def dia_content(dia:Dialog, name: str, data: dict[str, str], admin: bool) -> None:
+    """#TODO.
+
+    Args:
+        dia (Dialog):
+        name (str):
+        data (dict[str, str], admin: bool)):
+
+    """
     columns = settings.columns
     with (dia.clear(), ui.card().classes("w-100 gap-2 items-center text-center py-4 text-bold")):
         ui.label(text=f"{data.get(columns['object'])}")
@@ -110,7 +154,15 @@ def dia_content(dia:Dialog, name: str, data: dict[str, str], admin: bool):
             md.bind_visibility(md, "content")
         ui.button("Fertig", icon="check", on_click=lambda: dia.close()).props("text-color=secondary")
 
-def update_row_data(data: dict[str, str], grid: AgGrid, warehouse:Warehouse):
+def update_row_data(data: dict[str, str], grid: AgGrid, warehouse:Warehouse) -> None:
+    """#TODO.
+
+    Args:
+        data (dict[str, str]):
+        grid (AgGrid):
+        warehouse (Warehouse):
+
+    """
     grid.run_row_method(data["index"], "setData", data)
     updated = pl.from_dict(data)
     warehouse.inventory = warehouse.inventory.update(updated, on="index", how="full")

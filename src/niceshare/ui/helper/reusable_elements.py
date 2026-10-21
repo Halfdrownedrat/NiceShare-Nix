@@ -1,18 +1,34 @@
-from nicegui import ui, app
+"""Module for reusable UI elements."""
+from nicegui import Badge, app, ui
 from nicegui.elements.tabs import Tabs
 from slugify import slugify
 
 from niceshare.helper.i18n import i18n
 from niceshare.io.database import DB
 from niceshare.io.warehouse import Warehouse
-from niceshare.ui.helper.share import share_content, get_qr_code
+from niceshare.ui.helper.share import get_qr_code, share_content
 
 
-def badge(text: str):
+def badge(text: str) -> Badge:
+    """Converts raw text to an ui badge.
+
+    Args:
+        text (str): Text to convert
+
+    Returns:
+        Badge: UI Badge Element
+
+    """
     return ui.badge(text, color="secondary", text_color="white").props().classes("text-bold ml-2 py-1")
 
 
-def tabs():
+def tabs() -> Tabs:
+    """Creates styled tabs.
+
+    Returns:
+        Tabs: Styled tabs
+
+    """
     return (
         ui.tabs()
         .classes(
@@ -22,11 +38,26 @@ def tabs():
     )
 
 
-def tab_panels(_tabs: Tabs):
+def tab_panels(_tabs: Tabs) -> tab_panels:
+    """Creates tab panels.
+    
+    Args:
+        _tabs (Tabs): Existing tabs.
+
+    Returns:
+        tab_panels: Tab panels
+
+    """
     return ui.tab_panels(_tabs).classes("w-full h-dvh")
 
 
-def next_fab(next_page: dict[str, str]):
+def next_fab(next_page: dict[str, str]) -> None:
+    """Moves the selectio to the net tab in order.
+
+    Args:
+        next_page (dict[str, str]): 
+
+    """
     props: str = "text-color=secondary"
     with ui.page_sticky(position="bottom-right", x_offset=18, y_offset=18).classes("z-999"):
         fab = ui.fab(icon="navigate_next").props(f"{props} active-icon='hourglass_top'")
@@ -45,7 +76,13 @@ def next_fab(next_page: dict[str, str]):
             badge.bind_visibility_from(app.storage.user, "Total", backward=lambda v: v > 0)
 
 
-def back_fab(last_page: dict[str, str]):
+def back_fab(last_page: dict[str, str]) -> None:
+    """Moves the selection to the previous tab in order.
+
+    Args:
+        last_page (dict[str, str]):
+
+    """
     props: str = "text-color=primary"
     with ui.page_sticky(position="bottom-left", x_offset=30, y_offset=18).classes("z-999"):
         fab = ui.fab(icon="navigate_before", color="secondary").props(f"{props}")
@@ -64,7 +101,15 @@ def back_fab(last_page: dict[str, str]):
             badge.bind_text_from(app.storage.user, "Total")
             badge.bind_visibility_from(app.storage.user, "Total", backward=lambda v: v > 0)
 
-def share_fab(name:str, content:str):
+#fab = floating action button.
+def share_fab(name:str, content:str) -> None:
+    """Button for sharing stuff.
+
+    Args:
+        name (str):
+        content (str):
+
+    """
     with ui.page_sticky(x_offset=40, y_offset=40):
         with ui.fab(icon='share', direction='up'):
             ui.fab_action(icon='link').on('click', lambda: share_content(name, content)).props('active-icon=share')
@@ -73,7 +118,13 @@ def share_fab(name:str, content:str):
             ui.fab_action(icon='qr_code').on('click', lambda: get_qr_code(name)).props('active-icon=share')
 
 
-def save_fab(warehouse: Warehouse):
+def save_fab(warehouse: Warehouse) -> None:
+    """Button for saving stuff.
+
+    Args:
+        warehouse (Warehouse):
+
+    """
     async def save_data():
         DB.save(warehouse.name, warehouse.inventory, 'inventory')
         ui.navigate.reload()
