@@ -42,16 +42,11 @@ async def handle_images(subfolder: str, df: DataFrame) -> DataFrame:
     
     Returns:
         DataFrame: Returns the df with cached images
-        
-    """
-    # TODO maybe replace with df.columns.get...
-    # TODO Replace manuall caching with something better 
-
-    columns = settings.columns
-    if "image" in columns and "image" in df.columns:
-        for idx, row in enumerate(df.iter_rows(named=True)):
-            if row[settings.columns["image"]] is None:
-                continue
-            if url_dict := match_img_url(row[settings.columns["image"]]):
-                df[idx, columns["image"]] = await cache_image(url_dict, subfolder, row[columns["object"]])
+    """   
+    img_col = settings.columns.get("image")
+    obj_col = settings.columns.get("object")
+    if img_col and obj_col and img_col in df.columns:
+        for idx, (img, file) in enumerate(df[[img_col, obj_col]].rows()):
+            if img and (url_dict := match_img_url(img)):
+                df[idx, img_col] = await cache_image(url_dict, subfolder, file)
     return df
