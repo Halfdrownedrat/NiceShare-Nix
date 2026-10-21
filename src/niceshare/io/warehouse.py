@@ -1,3 +1,4 @@
+"""Warehouse Data Module."""
 from dataclasses import dataclass
 from typing import override
 
@@ -10,22 +11,19 @@ from niceshare.helper.logger import LOGGER
 from niceshare.io.cache import Cache
 from niceshare.io.wiki import MenuItem
 
-""" Warehouse Data Module. """
-
 COLUMNS = settings.columns
 WAREHOUSE_ROOT = slugify(settings.warehouse["label"])
 
 @dataclass
 class Warehouse(MenuItem):
-    """Warehouse Class 
-    """
+    """Warehouse Class."""
     name: str
     inventory: DataFrame
 
     @override
     @property
     def children(self) -> list[str]:
-        """Warehouse categories Getter
+        """Warehouse categories Getter.
 
         Returns:
             list[str]: List of categorie names
@@ -35,8 +33,7 @@ class Warehouse(MenuItem):
     @override
     @property
     def routes(self) -> dict[str, str]:
-        """#TODO
-        """
+        """#TODO."""
         routes: dict[str, str] = {}
         for category in self.categories:
             routes.update({category: f"/{WAREHOUSE_ROOT}/{slugify(self.name)}/{slugify(category)}"})
@@ -44,7 +41,7 @@ class Warehouse(MenuItem):
 
     @classmethod
     def create(cls, name: str, df: DataFrame) -> Warehouse:
-        """Creates warehouse 
+        """Creates warehouse.
 
         Args:
             name (str): Name of the warehouse
@@ -75,13 +72,16 @@ class Warehouse(MenuItem):
 
     @property
     def categories(self) -> list[str]:
-        """#TODO
+        """Categorie name getter.
+
+        Returns:
+            list[str]: List of categorie names
         """
         c = [settings.warehouse["selection"], self.name]
         try:
             c.extend(sorted(self.inventory[settings.COLUMNS["category"]].unique()))
-        except (AttributeError, TypeError):
-            raise AttributeError(
+        except (AttributeError, TypeError) as e:
+            raise AttributeError from e(
                 "It seems like you have used a category that is not sortable."
                 "\nPlease review the categories used in the category column of the inventory file."
                 "\nCheck for empty cells, and stuff like numbers, non-ascii-characters, etc."
@@ -110,7 +110,7 @@ class Warehouse(MenuItem):
 
     # TODO Maybe remove async and await, why are they needet?
     async def get_final(self) -> DataFrame:
-        """#TODO
+        """#TODO.
 
         Returns:
             DataFrame: The final Inventory values

@@ -1,3 +1,4 @@
+"""Mail Handler Module."""
 import smtplib
 import ssl
 import traceback
@@ -18,11 +19,9 @@ from niceshare.helper.dates import convert_dates
 from niceshare.helper.i18n import i18n
 from niceshare.helper.logger import LOGGER
 
-""" Mail Handler Module"""
 
 class RequestType(StrEnum):
-    """Request Type Enum.
-    """
+    """Request Type Enum."""
     request = "request"
     update = "update"
     delete = "delete"
@@ -30,8 +29,7 @@ class RequestType(StrEnum):
 
 
 class MailServer(BaseSettings):
-    """Reads basic Mail Settings from .env file.
-    """
+    """Reads basic Mail Settings from .env file."""
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="UTF-8", env_prefix="MAIL_", extra="ignore")
 
     domain: str
@@ -43,11 +41,11 @@ class MailServer(BaseSettings):
 def send_mail(
     request: dict[str, str | dict[str, str]],
     request_type: RequestType,
-    filename: Path = None,
-    exception: Exception = None,
-    mail_server: MailServer = MailServer(),
+    filename: Path | None = None,
+    exception: Exception | None = None,
+    mail_server: MailServer = MailServer(), #TODO Do not perform function call `MailServer` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
 ) -> None:
-    """Email Sender
+    """Email Sender.
 
     Creates and handles the request email
 
@@ -59,7 +57,6 @@ def send_mail(
         mail_server (MailServer): Custom MailServer or default if none specified
     
     """
-
     LOGGER.debug("Connecting to SMTP Server...")
     email = request.get("email")
     user_id = request.get("edit_link").split("=")[-1]
@@ -87,7 +84,7 @@ def send_mail(
 
         # Attaching file as payload 
         if filename is not None:
-            with open(filename, "rb") as attachment:
+            with Path.open(filename, "rb") as attachment:
                 part = MIMEBase("application", "octet-stream")
                 part.set_payload(attachment.read())
             encoders.encode_base64(part)
@@ -105,7 +102,7 @@ def send_mail(
 
 
 def _create_subject(request: dict[str, str | dict[str, str]], rtype: RequestType) -> str:
-    """ Email Subject Creator.
+    """Email Subject Creator.
     
     Args:
         request (dict[str, str | dict[str, str]]): The request dict 
@@ -115,14 +112,14 @@ def _create_subject(request: dict[str, str | dict[str, str]], rtype: RequestType
         str: Thre request converted into a subject line with current date
 
     """
-    start, end, month, year = convert_dates(request.get("dates"))
+    start, end, month, year = convert_dates(request.get("dates")) #TODO start, end never used
     if rtype == RequestType.update or rtype == RequestType.delete:
         return f"Re: [{i18n.get(f'mail.{rtype}')}] {request.get('name')} {month} {year}"
     return f"[{i18n.get(f'mail.{rtype}')}] {request.get('name')} {month} {year}"
 
 
 def _create_text(
-    ttype: Literal["text", "html"], request: dict[str, str | float | dict[str, str]], exception: Exception
+    ttype: Literal["text", "html"], request: dict[str, str | float | dict[str, str]], exception: Exception #TODO some problem here
 ) -> str:
     """The Email main body text Creator.
 
@@ -135,13 +132,12 @@ def _create_text(
         str: The mail body 
     
     """
-
     newline = "\n" if ttype == "text" else "<br>"
     add: list[str] = []
     for key, value in request.items():
         match key:
             case "dates":
-                start, end, month, year = convert_dates(request.get("dates"))
+                start, end, month, year = convert_dates(request.get("dates")) #TODO month, year unused
                 add.append(f"{i18n.get('form.start')}: {start}")
                 add.append(f"{i18n.get('form.end')}: {end}")
                 continue
@@ -149,7 +145,7 @@ def _create_text(
                 continue
             case "request" | "update" | "delete":
                 if value:
-                    readable_dt = f"{datetime.fromtimestamp(value):{settings.date_format} {settings.time_format}}"
+                    readable_dt = f"{datetime.fromtimestamp(value):{settings.date_format} {settings.time_format}}" #TODO fix thie timestamp
                     add.append(f"{i18n.get(f'mail.{key}')}: {readable_dt}")
             case "edit_link":
                 if not request.get("delete"):
@@ -160,6 +156,6 @@ def _create_text(
     add.append(f"{newline}{newline}{settings.form.get('message')}: {newline}{newline}{request.get('message')}")
     add.append(newline)
     if exception:
-        add.append(f"{newline}{newline}{[a for a in exception.args]}: {newline}{newline}{traceback.print_exc()}")
+        add.append(f"{newline}{newline}{list(exception.args)}: {newline}{newline}{traceback.print_exc()}")
 
     return newline.join(add)

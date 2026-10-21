@@ -1,3 +1,4 @@
+"""Export for Excel files (in Nextcloud)."""
 from xlsxwriter import Workbook
 
 from niceshare.helper.config import settings
@@ -8,10 +9,9 @@ from niceshare.io.excel import write_sheet
 from niceshare.io.nextcloud import Nextcloud
 from niceshare.io.warehouse import Warehouse
 
-""" Export for Excel files (in Nextcloud)"""
 
 def export_inventory_to_nc(warehouses:list[Warehouse]) -> None:
-    """Exports warehouses to excel and pushes it to nextcloud
+    """Exports warehouses to excel and pushes it to nextcloud.
 
     Args:
         warehouses (list[Warehouse]): List of Warehouses

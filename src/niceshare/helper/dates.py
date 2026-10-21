@@ -1,10 +1,10 @@
 from datetime import date
-from typing import Tuple
+from typing import tuple
 
 from niceshare.helper.config import settings
 
 
-def convert_dates(dates: str | dict[str, str], string:bool=True) -> Tuple[str | date, str | date, str, str]:
+def convert_dates(dates: str | dict[str, str], string:bool=True) -> tuple[str | date, str | date, str, str]:
     """Converts the dates supplied from a date_range_picker to the configured format.
     
     Also returns the month (%B) and year (%y) of the range.

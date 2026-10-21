@@ -1,34 +1,39 @@
+"""Wiki Data Module."""
 import dataclasses
+from collections.abc import Generator
 from contextlib import suppress
-from typing import Generator, Protocol, Tuple, override
+from pathlib import Path
+from typing import Protocol, override, tuple
 
 import httpx
 from bs4 import BeautifulSoup
 from slugify import slugify
 
 from niceshare.helper.config import settings
-from niceshare.helper.images import cache_image, match_img_url, cache_base64_img
+from niceshare.helper.images import cache_base64_img, cache_image, match_img_url
 from niceshare.helper.logger import LOGGER
 from niceshare.helper.paths import get_path
 
 WIKI_ROOT = slugify(settings.help["label"])
 
 class MenuItem(Protocol):
+    """Menu Item Class."""
     name: str
 
     @property
-    def children(self) -> list[str]: ...
+    def children(self) -> list[str]: ... #TODO
 
     @property
-    def routes(self) -> dict[str, str]: ...
+    def routes(self) -> dict[str, str]: ... #TODO
 
 
-def þroperty(args):
+def þroperty(args): #TODO
     pass
 
 
 @dataclasses.dataclass
 class Wiki:
+    """Wiki Dataclass."""
     style: str
     root: str
     menu: list[WikiChapter]
@@ -36,11 +41,20 @@ class Wiki:
 
 @dataclasses.dataclass
 class WikiChapter(MenuItem):
+    """WikiChapter Item."""
     name: str = None
     pages: dict[str, str] = None
 
     @classmethod
-    def create(cls, chapter_dict: dict[str, dict[str, str]]) -> Generator[WikiChapter, None, None]:
+    def create(cls, chapter_dict: dict[str, dict[str, str]]) -> Generator[WikiChapter]:
+        """Yields a WikiChapter generator.
+
+        Args:
+            chapter_dict (dict[str, dict[str, str]]): The Chapters to use
+        
+        Returns:
+            Generator[WikiChapter]: Yields a generator for the Wiki chapters
+        """
         for name, pages in chapter_dict.items():
             yield WikiChapter(name=name, pages=pages)
 
@@ -55,20 +69,21 @@ class WikiChapter(MenuItem):
         return self.pages
 
 
-async def pull_wiki():
+async def pull_wiki() -> None:
+    """Pulls the wiki from url."""
     file = get_path(settings.help["path"], "pages")
     url = settings.help["url"]
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(url, timeout=120)
-        with open(file, "w+") as f:
+        with Path.open(file, "w+") as f:
             f.write(response.text)
     except httpx.HTTPError as e:
         LOGGER.warning(f"Error fetching {file.name} from {url}: \n\nException:{e}\n\n")
 
 
 async def read_wiki() -> Wiki:
-    """ Constructs the wiki from a file
+    """Constructs the wiki from a file.
 
     Returns:
         Wiki: The Wiki created from the help page, definid in the settings 
@@ -76,21 +91,21 @@ async def read_wiki() -> Wiki:
     """
     file = get_path(settings.help["path"], "pages")
     try:
-        with open(file, "r") as f:
+        with Path.open(file, "r") as f:
             content = str(f.read())
             soup = BeautifulSoup(content, "html.parser")
             pages = content[content.index("<div") : -1].split('<div class="page-break"></div>')
             home_page, wiki_menu = parse_home(pages[0])
             pages = await parse_pages(pages)
-            menu = [c for c in clean_menu(wiki_menu, pages)]
-            return Wiki(style=fix_styles(str(soup.style)), root=home_page, menu=menu, content=pages)
-    except FileNotFoundError:
+            menu = list(clean_menu(wiki_menu, pages))
+            return Wiki(style=_fix_styles(str(soup.style)), root=home_page, menu=menu, content=pages)
+    except FileNotFoundError as e:
         LOGGER.exception(f"File {file.name} not found.")
-        raise FileNotFoundError
+        raise FileNotFoundError from e
 
 
-def parse_home(home: str) -> Tuple[str, list[WikiChapter]]:
-    """Parse the home page text
+def parse_home(home: str) -> tuple[str, list[WikiChapter]]:
+    """Parse the home page text.
 
     Args:
         home (str): The Homepage as text 
@@ -112,10 +127,10 @@ def parse_home(home: str) -> Tuple[str, list[WikiChapter]]:
             page_name = f"{item.string}-{item['href'].split("-")[-1]}"
             item['href'] = f"/{WIKI_ROOT}/{slugify(chapter_name)}/{slugify(page_name)}"
             menu[chapter_name].update({str(item.string): str(item['href'])})
-    return soup.prettify(), [i for i in WikiChapter.create(menu)]
+    return soup.prettify(), list(WikiChapter.create(menu))
 
-def clean_menu(menu: list[WikiChapter], content: list[WikiChapter]) -> Generator[WikiChapter, None, None]:
-    """#TODO
+def clean_menu(menu: list[WikiChapter], content: list[WikiChapter]) -> Generator[WikiChapter]:
+    """#TODO.
 
     Args:
         menu (list[WikiChapter]): #TODO
@@ -135,8 +150,8 @@ def clean_menu(menu: list[WikiChapter], content: list[WikiChapter]) -> Generator
         yield chapter
 
 # TODO Why does this exists
-def fix_styles(style: str):
-    """ Helper Function for fixing style 
+def _fix_styles(style: str):
+    """Helper Function for fixing style.
     
     Args:
         style (str): Style as string block
@@ -201,4 +216,4 @@ async def parse_pages(pages: list[str]) -> list[WikiChapter]:
             page_id = h1.get('id').split("-")[-1]
             page_dict[str(chapter_id)].update({page_id: soup.prettify()})
 
-    return [i for i in WikiChapter.create(page_dict)]
+    return list(WikiChapter.create(page_dict))

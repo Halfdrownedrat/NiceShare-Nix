@@ -1,3 +1,4 @@
+"""Module for handling / caching images."""
 import base64
 from contextlib import suppress
 from io import BytesIO
@@ -6,9 +7,9 @@ from pathlib import Path
 
 import httpx
 import qrcode
-from PIL import Image, UnidentifiedImageError
 from nicegui import app, nicegui, ui
 from nicegui.events import UploadEventArguments
+from PIL import Image, UnidentifiedImageError
 from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.moduledrawers import RoundedModuleDrawer
 from slugify import slugify
@@ -20,7 +21,6 @@ from niceshare.helper.logger import LOGGER
 from niceshare.helper.paths import get_path
 from niceshare.ui.helper.validators import IMG_URL_REGEX
 
-""" Module for handling / caching images."""
 
 def make_thumbnail(path: Path, size: int = 600) -> None:
     """Converts image file to desired resultion for Thumbnail usage.
@@ -53,7 +53,7 @@ def match_img_url(to_test: str) -> dict | None:
         return None
 
 def _construct_img_url(subfolder: str, filename: str, file_extension:str, domain: bool) -> str:
-    """Constructs an image url for accessing it. 
+    """Constructs an image url for accessing it.
     
     Slugifys the input to handle special characters.
 
@@ -71,7 +71,7 @@ def _construct_img_url(subfolder: str, filename: str, file_extension:str, domain
 
 
 def _construct_img_path(subfolder: str, filename: str, file_extension: str) -> Path:
-    """Constructs a local Filepath for the image. 
+    """Constructs a local Filepath for the image.
 
     Slugifys the input to handle special characters.
 
@@ -84,7 +84,7 @@ def _construct_img_path(subfolder: str, filename: str, file_extension: str) -> P
 
 
 async def upload_img(warehouse_name:str, event: UploadEventArguments, data:dict) -> None:
-    """ Uploads an image to the site 
+    """Uploads an image to the site.
 
     Upload the new image, remove the old one, register the file.
 
@@ -110,7 +110,7 @@ async def upload_img(warehouse_name:str, event: UploadEventArguments, data:dict)
         ui.notify("Connection failed, please retry uploading the image.")
 
 async def delete_img(data: dict) -> None:
-    """Removes images from the site and local filesystem
+    """Removes images from the site and local filesystem.
 
     Args:
         data (dict): Data dict to be updated
@@ -125,7 +125,7 @@ async def delete_img(data: dict) -> None:
     data[settings.columns["image"]] = ""
 
 async def cache_image(url_dict: dict[str, str], subfolder:str, filename: str, thumbnail_size:int = 600) -> (str, str, dict, bool):
-    """Caches images from external URL for local storage
+    """Caches images from external URL for local storage.
 
     Images from external server are cached locally for faster loading and fewer requests.
 
@@ -139,9 +139,8 @@ async def cache_image(url_dict: dict[str, str], subfolder:str, filename: str, th
         (str, str, dict, bool): Same as the input but from the local system 
 
     """
-
     path = _construct_img_path(subfolder, filename, url_dict["ext"])
-    if not path.is_file() and url_dict["domain"] != settings.domain or ARGS.images:
+    if (not path.is_file() and url_dict["domain"] != settings.domain) or ARGS.images:
         try:
             response = await nicegui.run.io_bound(httpx.get,url_dict["url"], timeout=5)
             if response.status_code == 200 and response.headers["content-type"].startswith("image"):
@@ -165,7 +164,7 @@ async def cache_base64_img(src:str, subfolder:str, filename:str, thumbnail_size:
     """Caches base64 images into regular binary file.
 
     Args:
-        url_dict (dict[str, str]): Url dict of the file 
+        src (str): The source image (base64 text)
         subfolder (str): The subfolder in images/
         filename (str): The name of the file (With suffix)
         thumbnail_size (int): The desired size (default 600)
@@ -183,7 +182,7 @@ async def cache_base64_img(src:str, subfolder:str, filename:str, thumbnail_size:
             Image.open(BytesIO(base64.b64decode(base))).save(path)
             make_thumbnail(path, thumbnail_size)
             LOGGER.info(f"Successfully converted image from {split[-1]} and saved to {path}.")
-        except IOError:
+        except IOError: #TODO maybe replace with OSError
             LOGGER.exception(f"Could not convert image from {split[-1]} and save it to {path}", exc_info=True)
             return src
     img_url = _construct_img_url(subfolder, filename, ext, domain=False)
@@ -194,7 +193,7 @@ async def cache_base64_img(src:str, subfolder:str, filename:str, thumbnail_size:
     return _construct_img_url(subfolder, filename, ext, domain=True)
 
 def generate_qrcode(data: str, subfolder:str, filename:str) -> (Image, str):
-    """ Generate qr code
+    """Generate qr code.
 
     Genereates a QR-Code with high error correction and the website logo.
 

@@ -4,7 +4,7 @@ from nicegui.elements.drawer import LeftDrawer
 from niceshare.helper.config import settings
 from niceshare.helper.i18n import i18n
 from niceshare.helper.logger import LOGGER
-from niceshare.io.exporter import export_inventory_to_nc
+from niceshare.io.nextcloud_exporter import export_inventory_to_nc
 from niceshare.io.load_data import load_data_from_dav, load_wiki
 from niceshare.io.warehouse import Warehouse
 from niceshare.ui.auth import authenticate_user

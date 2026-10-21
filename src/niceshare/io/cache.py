@@ -1,15 +1,15 @@
+"""Module for caching stuff."""
 from nicegui import app
-from nicegui.observables import ObservableList, ObservableDict
+from nicegui.observables import ObservableDict, ObservableList
 
 from niceshare.helper.i18n import i18n
+from niceshare.io.warehouse import Warehouse
 
-""" Module for caching stuff."""
 
 class Cache:
-    """ Cache Class for storing data in memory (browser tab).
-    """
+    """Cache Class for storing data in memory (browser tab)."""
     def __init__(self, warehouses:list[Warehouse]):
-        """ Init for Cache
+        """Init for Cache.
 
         Args:
             warehouses (list[Warehouse]): A list of warehouses 
