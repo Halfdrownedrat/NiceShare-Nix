@@ -1,3 +1,4 @@
+"""Start Sub-Page Module."""
 from nicegui import ui
 from nicegui.elements.drawer import RightDrawer
 
@@ -5,17 +6,15 @@ from niceshare.helper.config import settings
 from niceshare.helper.logger import LOGGER
 from niceshare.ui.helper.markdown import render_markdown
 
-""" Start Sub-Page Module"""
 
 def start_page(rd: RightDrawer | None, md: dict[str, str]) -> None:
-    """ Creates the start page
+    """Creates the start page.
     
     Args:
         rd (RightDrawer | None): The Rightdrawer or None 
         md (dict[str,str]): #TODO 
 
     """
-
     rd.hide() if rd else None
     LOGGER.debug("Creating start page...")
     ui.page_title(settings.title)

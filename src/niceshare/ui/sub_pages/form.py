@@ -1,6 +1,7 @@
+"""Form Sub-Page Module."""
 from contextlib import suppress
 
-from nicegui import app, ui, PageArguments
+from nicegui import PageArguments, app, ui
 from nicegui.elements.drawer import LeftDrawer
 
 from niceshare.helper.config import settings
@@ -8,12 +9,11 @@ from niceshare.io.warehouse import Warehouse
 from niceshare.ui.helper.magic_links import load_data_from_magic_link
 from niceshare.ui.helper.markdown import render_markdown
 from niceshare.ui.helper.request_form import Form
-from niceshare.ui.helper.reusable_elements import back_fab, tabs, tab_panels
+from niceshare.ui.helper.reusable_elements import back_fab, tab_panels, tabs
 
-""" Form Sub-Page Module"""
 
 async def form_page(ld: LeftDrawer, warehouses: list[Warehouse], md: dict[str, str], args: PageArguments) -> None:
-    """Form Sub-Page Creator
+    """Form Sub-Page Creator.
     
     Args:
         ld (LeftDrawer): The Left Drawer
@@ -30,7 +30,7 @@ async def form_page(ld: LeftDrawer, warehouses: list[Warehouse], md: dict[str, s
         if screen["width"] < 1280:
             with suppress(IndexError):
                 # First tab is open by default
-                form_panels.set_value([t.props.get("label") for t in form_tabs.descendants()][0])
+                form_panels.set_value(next(t.props.get("label") for t in form_tabs.descendants()))
         else:
             form_panels.set_value("default")
 

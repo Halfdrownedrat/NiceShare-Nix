@@ -1,11 +1,12 @@
+"""The root page that constructs the layout and is only loaded on when requesting '/'."""
 from contextlib import suppress
 
-from nicegui import ui, app
+from nicegui import app, ui
 from slugify import slugify
 
 from niceshare.helper.config import settings
 from niceshare.io.cache import Cache
-from niceshare.io.warehouse import Warehouse, WAREHOUSE_ROOT
+from niceshare.io.warehouse import WAREHOUSE_ROOT, Warehouse
 from niceshare.io.wiki import WIKI_ROOT, Wiki
 from niceshare.ui.helper.theme import Theme
 from niceshare.ui.layout import create_layout
@@ -13,12 +14,10 @@ from niceshare.ui.sub_pages.cart import cart_page
 from niceshare.ui.sub_pages.category import category_page
 from niceshare.ui.sub_pages.finish import finish_page
 from niceshare.ui.sub_pages.form import form_page
-from niceshare.ui.sub_pages.help import wiki_page, help_page
+from niceshare.ui.sub_pages.help import help_page, wiki_page
 from niceshare.ui.sub_pages.login import login_page
 from niceshare.ui.sub_pages.settings_page import settings_page
 from niceshare.ui.sub_pages.start import start_page
-
-"""The root page that constructs the layout and is only loaded on when requesting / ."""
 
 
 def root(
@@ -34,6 +33,7 @@ def root(
         markdown (dict[str, str]): #TODO
         wiki (Wiki): A wiki object if the wiki is active, otherwise None
         display_wiki: #TODO
+        
     """
     ui.add_head_html("""
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />

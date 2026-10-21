@@ -1,8 +1,7 @@
+"""This module implements functions that handle the command line interface of the program."""
 import argparse
 import logging
 from argparse import Namespace
-
-"""This module implements functions that handle the command line interface of the program."""
 
 
 # Get Arguments from Commandline
@@ -13,7 +12,6 @@ def get_args() -> Namespace:
         Namespace: The arguments given in the command line.
 
     """
-    
     # Get argparser
     argparser = argparse.ArgumentParser(
         prog="inventurgui",

@@ -1,3 +1,4 @@
+"""Help Sub-Page Module."""
 from nicegui import ui
 from nicegui.elements.drawer import LeftDrawer
 
@@ -6,10 +7,9 @@ from niceshare.helper.logger import LOGGER
 from niceshare.ui.helper.markdown import render_markdown
 from niceshare.ui.helper.reusable_elements import share_fab
 
-""" Help Sub-Page Module"""
 
-async def help_page(ld: LeftDrawer, md: dict[str, str]):
-    """Help Sub-Page Creator 
+async def help_page(ld: LeftDrawer, md: dict[str, str]) -> None:
+    """Help Sub-Page Creator.
 
     Args:
         ld (LeftDrawer): The Left Drawer
@@ -18,12 +18,12 @@ async def help_page(ld: LeftDrawer, md: dict[str, str]):
     """
     ld.hide()
     ui.page_title(f"{settings.help['label']}")
-    LOGGER.debug(f"Creating help page...")
+    LOGGER.debug("Creating help page...")
     with ui.tab_panel("help").classes("m-0 p-0 max-sm:pb-20 items-center w-full scroll h-dvh"):
         render_markdown(md.get(settings.help["label"]))
 
-async def wiki_page(name: str, content: str, ld: LeftDrawer, style: str):
-    """ Wiki Page Creator
+async def wiki_page(name: str, content: str, ld: LeftDrawer, style: str) -> None:
+    """Wiki Page Creator.
 
     Args:
         name (str): The Name of the wiki page

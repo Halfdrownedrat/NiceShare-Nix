@@ -1,18 +1,18 @@
+"""Settings Sub-Page Module."""
 from nicegui import ui
 from nicegui.elements.drawer import LeftDrawer
 
 from niceshare.helper.config import settings
 from niceshare.helper.i18n import i18n
 from niceshare.helper.logger import LOGGER
-from niceshare.io.nextcloud_exporter import export_inventory_to_nc
 from niceshare.io.load_data import load_data_from_dav, load_wiki
+from niceshare.io.nextcloud_exporter import export_inventory_to_nc
 from niceshare.io.warehouse import Warehouse
 from niceshare.ui.auth import authenticate_user
 
-""" Settings Sub-Page Module """
 
-def settings_page(ld: LeftDrawer, warehouses:list[Warehouse]):
-    """Settings Sub Page Creator
+def settings_page(ld: LeftDrawer, warehouses:list[Warehouse]) -> None:
+    """Settings Sub Page Creator.
 
     Args:
         ld (LeftDrawer): The Left Drawer
@@ -27,7 +27,7 @@ def settings_page(ld: LeftDrawer, warehouses:list[Warehouse]):
 
     # Creates Settings Page
     ui.page_title(f"{settings.settings['label']}")
-    LOGGER.debug(f"Creating settings page...")
+    LOGGER.debug("Creating settings page...")
     with ui.tab_panel("settings").classes("m-0 p-10 max-sm:pb-20 items-center w-full scroll h-dvh"):
         ui.label("Achtung: Alle Bilder, Links & Kommentare die hier hochgeladen wurden gehen verloren! Falls du etwas geändert hast, exportiere zunächst.")
         ui.button(i18n.get("settings.reload_dav"), icon='update',

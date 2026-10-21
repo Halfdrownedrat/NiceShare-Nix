@@ -1,10 +1,11 @@
+"""Main Entrypoint for the programm that starts up the UI and retrieves needet files."""
 import asyncio
 import locale
 import os
 from pathlib import Path
 
 import jwt
-from nicegui import ui, app
+from nicegui import app, ui
 
 from niceshare.cli import ARGS
 from niceshare.helper.config import settings
@@ -13,11 +14,10 @@ from niceshare.helper.paths import get_path
 from niceshare.io.load_data import load_data_from_dav, load_wiki
 from niceshare.ui.root import root
 
-""" Main Entrypoint for the programm that starts up the UI and retrieves needet files."""
 
 # Starts the UI
 def main():
-    """ Main Function. Retrieves Data and starts the UI.
+    """Main Function. Retrieves Data and starts the UI.
 
     Creates base files if they are missing and nextcloud is disabled.
     """
@@ -25,7 +25,7 @@ def main():
         LOGGER.debug(".env file found.")
     else:
         LOGGER.warn("Creating default .env file")
-        with open("./.env", 'w') as file:
+        with Path.open("./.env", 'w') as file:
             file.write(
                 """
                     #.env
@@ -52,11 +52,11 @@ def main():
         for md in ["help", "warehouse", "start"]:
             if not Path("/files/pages/" + getattr(settings,md)["path"]).exists():
                 LOGGER.info(f"Creating starting file {md}.md in files/pages/")
-                with open(f"./files/pages/{getattr(settings,md)["path"]}", 'w') as file:
+                with Path.open(f"./files/pages/{getattr(settings,md)["path"]}", 'w') as file:
                     file.write(f"{md}.md File \n Enter Information for the {md} here")
         if not Path("/files/pages/" + settings.form["terms"]["path"]).exists():
-            LOGGER.info(f"Creating starting file form terms.md in files/pages")
-            with open(f"./files/pages/{settings.form["terms"]["path"]}", 'w') as file:
+            LOGGER.info("Creating starting file form terms.md in files/pages")
+            with Path.open(f"./files/pages/{settings.form["terms"]["path"]}", 'w') as file:
                 file.write(f"{md}.md File \n Enter Information for the form terms here")
 
     # Attempt to fetch Data from nextcloud, then load them locally 
@@ -78,8 +78,8 @@ def main():
     app.add_static_file(local_file=get_path("service_worker.js"), url_path="/helpers/service_worker.js", strict=False)
     app.add_static_file(local_file=get_path("favicon.png"), url_path="/favicon.ico", strict=False)
 
-    os.makedirs("./files/splash/",exist_ok=True)
-    os.makedirs("./files/icons/",exist_ok=True)
+    Path.makedirs("./files/splash/",exist_ok=True)
+    Path.makedirs("./files/icons/",exist_ok=True)
     app.add_static_files("/splash/", get_path("splash")) 
     app.add_static_files("/icons/", get_path("icons"))
     ui.run(

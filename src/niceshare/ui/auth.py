@@ -1,3 +1,4 @@
+"""Module for handling JSon Web Tokens (JWT) for authenticating users."""
 import datetime
 import os
 
@@ -7,12 +8,10 @@ from nicegui import Event
 
 from niceshare.io.cache import Cache
 
-""" Module for handling JSon Web Tokens (JWT) for authenticating users"""
-
 authenticated = Event[bool]()
 
 def create_jwt():
-    """JWT Creator
+    """JWT Creator.
 
     Creates a new JWT with the current time and a delta of 6 hours
     
@@ -24,7 +23,7 @@ def create_jwt():
 
 
 def authenticate_user() -> bool:
-    """User authentication using a created JWT 
+    """User authentication using a created JWT.
 
     Catches KeyError and ExpiredSignatureError and returns it as failed authentication.
 
@@ -35,7 +34,8 @@ def authenticate_user() -> bool:
     try:
         if Cache.auth_token() is None:
             return False
-        jwt.decode(Cache.auth_token(), os.environ["UI_AUTH_SECRET"], algorithms="HS256")
-        return True
+        else:
+            jwt.decode(Cache.auth_token(), os.environ["UI_AUTH_SECRET"], algorithms="HS256")
+            return True
     except KeyError, ExpiredSignatureError:
         return False
