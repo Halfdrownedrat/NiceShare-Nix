@@ -1,7 +1,7 @@
 """Markdown Page Renderer Module."""
 from collections.abc import Generator
+from pathlib import Path
 
-from filepath import Path
 from nicegui import ui
 from nicegui.elements.markdown import Markdown
 

@@ -1,6 +1,4 @@
 """Layout functions for displaying warehouse contents, wiki pages."""
-from typing import tuple
-
 from nicegui import app, ui
 from nicegui.elements.button import Button
 from nicegui.elements.drawer import LeftDrawer, RightDrawer

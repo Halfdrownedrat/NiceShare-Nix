@@ -65,7 +65,7 @@ class Warehouse(MenuItem):
             df.insert_column(1, (pl.col(COLUMNS["count"]) * pl.col(COLUMNS["weight"])).alias(COLUMNS["total_weight"]))
         else:
             df.with_columns(pl.col(COLUMNS["count"]) * pl.col(COLUMNS["weight"]).alias(COLUMNS["total_weight"]))
-        warehouse = cls(name=name, inventory=df.select([c for c in COLUMNS.values()]).with_row_index())
+        warehouse = cls(name=name, inventory=df.select(list(COLUMNS.values())).with_row_index())
         warehouse.inventory.insert_column(0, (pl.lit(name)).alias(settings.warehouse["label"]))
         LOGGER.info(f"Successfully created warehouse {name}")
         return warehouse
@@ -79,7 +79,7 @@ class Warehouse(MenuItem):
         """
         c = [settings.warehouse["selection"], self.name]
         try:
-            c.extend(sorted(self.inventory[settings.COLUMNS["category"]].unique()))
+            c.extend(sorted(self.inventory[settings.columns["category"]].unique()))
         except (AttributeError, TypeError) as e:
             raise AttributeError from e(
                 "It seems like you have used a category that is not sortable."

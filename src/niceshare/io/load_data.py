@@ -1,6 +1,4 @@
 """Module for loading data from Nextcloud usign CalDav."""
-from typing import tuple
-
 from _duckdb import CatalogException, IOException
 
 from niceshare.cli import ARGS

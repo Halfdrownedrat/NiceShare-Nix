@@ -1,10 +1,8 @@
 """Path Enforcment module."""
-from os import mkdir
 from pathlib import Path
 from typing import Literal
 
 import niceshare
-
 
 #TODO Move creation rules from main.py here as well
 DIRS = ["users", "images", "locales", "lists", "pages"] #Directorys that need to be created

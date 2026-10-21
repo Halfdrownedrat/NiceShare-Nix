@@ -1,5 +1,6 @@
 """Module for reusable UI elements."""
-from nicegui import Badge, app, ui
+from nicegui import app, ui
+from nicegui.elements.badge import Badge
 from nicegui.elements.tabs import Tabs
 from slugify import slugify
 
@@ -9,7 +10,7 @@ from niceshare.io.warehouse import Warehouse
 from niceshare.ui.helper.share import get_qr_code, share_content
 
 
-def badge(text: str) -> Badge:
+def badge(text: str) -> Badge: 
     """Converts raw text to an ui badge.
 
     Args:

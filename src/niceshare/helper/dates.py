@@ -1,5 +1,5 @@
+"""."""
 from datetime import date
-from typing import tuple
 
 from niceshare.helper.config import settings
 

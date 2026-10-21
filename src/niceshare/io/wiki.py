@@ -3,7 +3,7 @@ import dataclasses
 from collections.abc import Generator
 from contextlib import suppress
 from pathlib import Path
-from typing import Protocol, override, tuple
+from typing import Protocol, override
 
 import httpx
 from bs4 import BeautifulSoup

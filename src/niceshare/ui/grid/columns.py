@@ -1,7 +1,6 @@
 """Columns Module."""
 from collections.abc import Callable
 from functools import wraps
-from typing import Any
 
 from niceshare.helper.config import settings
 

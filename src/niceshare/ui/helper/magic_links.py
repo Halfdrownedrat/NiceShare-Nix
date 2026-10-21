@@ -1,5 +1,5 @@
 """Magic Link Handler."""
-from filepath import Path
+from pathlib import Path
 from nicegui import app, json, ui
 from slugify import slugify
 

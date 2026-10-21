@@ -78,8 +78,8 @@ def main():
     app.add_static_file(local_file=get_path("service_worker.js"), url_path="/helpers/service_worker.js", strict=False)
     app.add_static_file(local_file=get_path("favicon.png"), url_path="/favicon.ico", strict=False)
 
-    Path.makedirs("./files/splash/",exist_ok=True)
-    Path.makedirs("./files/icons/",exist_ok=True)
+    Path("./files/splash/").mkdir(exist_ok=True,parents=True)
+    Path("./files/icons/").mkdir(exist_ok=True,parents=True)
     app.add_static_files("/splash/", get_path("splash")) 
     app.add_static_files("/icons/", get_path("icons"))
     ui.run(

@@ -3,12 +3,11 @@ from nicegui import app
 from nicegui.observables import ObservableDict, ObservableList
 
 from niceshare.helper.i18n import i18n
-from niceshare.io.warehouse import Warehouse
 
 
 class Cache:
     """Cache Class for storing data in memory (browser tab)."""
-    def __init__(self, warehouses:list[Warehouse]):
+    def __init__(self, warehouses:list[Warehouse]): #TODO how to fix without circle import?s
         """Init for Cache.
 
         Args:

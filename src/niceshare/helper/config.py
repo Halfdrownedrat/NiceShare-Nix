@@ -9,7 +9,7 @@ from niceshare.cli import ARGS
 from niceshare.helper.logger import LOGGER
 from niceshare.helper.paths import get_path
 
-CONFIG_FILE: Path = get_path(ARGS.CONFIG_FILE) #The User created config file 
+CONFIG_FILE: Path = get_path(ARGS.config_file) #The User created config file 
 DEFAULT_CONFIG_FILE: Path = get_path("default_config.yml") #Default fallback file
 
 

@@ -45,7 +45,7 @@ async def handle_request(
         overview = write_overview(request)
     else: # Read all sheets and get overview sheet
         sheets: dict[str, DataFrame] = pl.read_excel(path, sheet_id=0, raise_if_empty=False)
-        overview = list(sheets.values())[0]
+        overview = next(iter(sheets.values()))
         if overview.is_empty(): overview = write_overview(request)
         elif delete:
             overview = overview.join(write_overview(request), on=name_col, how='anti')

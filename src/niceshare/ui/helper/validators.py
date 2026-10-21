@@ -1,7 +1,7 @@
 """Form Value Validation Module (Email Adress, Phone Number, Web URL)."""
 import re
-from collections.abc import Any, Callable
-from typing import Final
+from collections.abc import Callable
+from typing import Any, Final
 
 from email_validator import EmailNotValidError, validate_email
 from nicegui.observables import ObservableDict
