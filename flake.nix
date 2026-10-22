@@ -26,25 +26,10 @@
             ruff 
           ];
 
-          # Potential issue with loading from env, replace later with better reading or secret managment
-
           shellHook = ''
             export LD_LIBRARY_PATH=${pkgs.gcc-unwrapped.lib}/lib:$LD_LIBRARY_PATH
             export UV_PYTHON_PREFERENCE=only-system
             export UV_PYTHON=python314
-
-            export NEXTCLOUD_TOKEN=my-super-secret-nextcloud-app-token
-            export NEXTCLOUD_USER=exampleuser
-            export NEXTCLOUD_DOMAIN=cloud.example.org
-
-            export UI_STORAGE_SECRET=somerandomstringlongenoughtobesafe
-            export UI_ADMIN_PASSWORD="some password you will use to log in to admin panel"
-            export UI_AUTH_SECRET=somerandomstringlongerthan32characters
-
-            export MAIL_USER=user@example.org
-            export MAIL_PORT=465
-            export MAIL_PASSWORD="my super secret mail password"
-            export MAIL_DOMAIN=mailserver.example.org
 
             echo "Python: $(python --version)"
             echo "Syncing dependencies..."

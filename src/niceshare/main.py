@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 import jwt
+from dotenv import dotenv_values, load_dotenv
 from nicegui import app, ui
 
 from niceshare.cli import ARGS
@@ -15,7 +16,6 @@ from niceshare.io.load_data import load_data_from_dav, load_wiki
 from niceshare.ui.root import root
 
 
-# Starts the UI
 def main():
     """Main Function. Retrieves Data and starts the UI.
 
@@ -66,6 +66,9 @@ def main():
     if settings.help["wiki"]:
         wiki = asyncio.run(load_wiki())
     else: wiki = None
+
+    load_dotenv()
+    LOGGER.debug(dotenv_values())
 
     if len(os.environ["UI_AUTH_SECRET"]) < 32:
         raise jwt.exceptions.InvalidKeyError("Auth Secret must be at least 32 characters long")
