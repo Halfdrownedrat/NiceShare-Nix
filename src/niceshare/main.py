@@ -12,7 +12,7 @@ from niceshare.cli import ARGS
 from niceshare.helper.config import settings
 from niceshare.helper.logger import LOGGER
 from niceshare.helper.paths import get_path
-from niceshare.io.load_data import load_data_from_dav, load_wiki
+from niceshare.io.load_data import load_data_from_dav, load_wiki_from_dav
 from niceshare.ui.root import root
 
 
@@ -64,7 +64,7 @@ def main():
     
     # Load wiki if enabled
     if settings.help["wiki"]:
-        wiki = asyncio.run(load_wiki())
+        wiki = asyncio.run(load_wiki_from_dav())
     else: wiki = None
 
     load_dotenv()
@@ -77,9 +77,9 @@ def main():
     storage_secret = os.environ["UI_STORAGE_SECRET"]
     os.environ.setdefault("NICEGUI_STORAGE_PATH", str(get_path("users")))
 
-    app.add_static_file(local_file=get_path("manifest.json"), url_path="/helpers/manifest.json", strict=False)
-    app.add_static_file(local_file=get_path("service_worker.js"), url_path="/helpers/service_worker.js", strict=False)
-    app.add_static_file(local_file=get_path("favicon.png"), url_path="/favicon.ico", strict=False)
+    app.add_static_file(local_file=get_path("manifest.json"), url_path="/helpers/manifest.json", strict=True)
+    app.add_static_file(local_file=get_path("service_worker.js"), url_path="/helpers/service_worker.js", strict=True)
+    app.add_static_file(local_file=get_path("favicon.png"), url_path="/favicon.ico", strict=True)
 
     Path("./files/splash/").mkdir(exist_ok=True,parents=True)
     Path("./files/icons/").mkdir(exist_ok=True,parents=True)

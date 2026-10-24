@@ -1,4 +1,4 @@
-"""."""
+"""Date Converter helper."""
 from datetime import date
 
 from niceshare.helper.config import settings

@@ -6,17 +6,16 @@ from nicegui import ui
 from niceshare.helper.config import settings
 
 
-# Methods to handle Theme
 class Theme:
-    """Theme styling class."""
+    """Theme styling class for managing UI color schemes."""
     instance = None
 
     def __init__(self, config: dict[str, str]) -> None:
-        """Theme init.
-        
-        Args:
-            config (dict[str,str]):
+        """Initializes the theme with color configuration.
 
+        Args:
+            config (dict[str,str]): Dictionary containing theme color settings.
+            
         """
         self.primary = config.get("primary")
         self.secondary = config.get("secondary")
@@ -27,10 +26,10 @@ class Theme:
 
     @classmethod
     def singleton(cls) -> Self:
-        """#TODO.
+        """Returns the singleton instance of the Theme class.
 
         Returns:
-            Self: 
+            Self: The singleton Theme instance.
 
         """
         if not cls.instance:
@@ -38,7 +37,7 @@ class Theme:
         return cls.instance
 
     def set_colors(self):
-        """Sets the colors for the theme."""
+        """Sets the colors for the theme and dark mode."""
         ui.colors(
             primary=self.primary,
             secondary=self.secondary,

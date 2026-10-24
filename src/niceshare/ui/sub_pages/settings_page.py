@@ -5,7 +5,7 @@ from nicegui.elements.drawer import LeftDrawer
 from niceshare.helper.config import settings
 from niceshare.helper.i18n import i18n
 from niceshare.helper.logger import LOGGER
-from niceshare.io.load_data import load_data_from_dav, load_wiki
+from niceshare.io.load_data import load_data_from_dav, load_wiki_from_dav
 from niceshare.io.nextcloud_exporter import export_inventory_to_nc
 from niceshare.io.warehouse import Warehouse
 from niceshare.ui.auth import authenticate_user
@@ -40,5 +40,5 @@ def settings_page(ld: LeftDrawer, warehouses:list[Warehouse]) -> None:
         if settings.help["wiki"]:
             ui.label("Hinweis: Wiki laden dauert ne halbe Minute, läuft im Hintergrund.")
             ui.button(i18n.get("settings.reload_wiki"), icon='update',
-                  on_click=lambda: load_wiki(reload=True)
+                  on_click=lambda: load_wiki_from_dav(reload=True)
                 ).props("text-color=secondary")

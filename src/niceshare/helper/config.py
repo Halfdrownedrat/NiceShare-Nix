@@ -1,9 +1,10 @@
+"""Config / Settings Module."""
 from logging import debug, exception, warning
 from pathlib import Path
 from typing import Self
 
 import yaml
-from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettingsSource
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from niceshare.cli import ARGS
 from niceshare.helper.logger import LOGGER
@@ -16,7 +17,7 @@ DEFAULT_CONFIG_FILE: Path = get_path("default_config.yml") #Default fallback fil
 class Settings(BaseSettings):
     """Base Config Creator.
 
-    Creates the config file from hardcodet variables. Any changes to the default should be made here.
+    Creates the config file from hardcodet variables. Any changes to the default should be made here
 
     """
     model_config = SettingsConfigDict(

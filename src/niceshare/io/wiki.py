@@ -47,13 +47,13 @@ class WikiChapter(MenuItem):
 
     @classmethod
     def create(cls, chapter_dict: dict[str, dict[str, str]]) -> Generator[WikiChapter]:
-        """Yields a WikiChapter generator.
+        """Yields a WikiChapter generator instance.
 
         Args:
-            chapter_dict (dict[str, dict[str, str]]): The Chapters to use
+            chapter_dict (dict[str, dict[str, str]]): Dictinary with chapternames and pages
         
         Returns:
-            Generator[WikiChapter]: Yields a generator for the Wiki chapters
+            Generator[WikiChapter]: Generator of WikiChapter instances.
         """
         for name, pages in chapter_dict.items():
             yield WikiChapter(name=name, pages=pages)
@@ -70,7 +70,7 @@ class WikiChapter(MenuItem):
 
 
 async def pull_wiki() -> None:
-    """Pulls the wiki from url."""
+    """Pulls the wiki content from remote url and saves locally."""
     file = get_path(settings.help["path"], "pages")
     url = settings.help["url"]
     try:
@@ -83,10 +83,10 @@ async def pull_wiki() -> None:
 
 
 async def read_wiki() -> Wiki:
-    """Constructs the wiki from a file.
+    """Constructs the wiki instance from a local HTML file.
 
     Returns:
-        Wiki: The Wiki created from the help page, definid in the settings 
+        Wiki: The Parsed Wiki content
     
     """
     file = get_path(settings.help["path"], "pages")
@@ -105,10 +105,10 @@ async def read_wiki() -> Wiki:
 
 
 def parse_home(home: str) -> tuple[str, list[WikiChapter]]:
-    """Parse the home page text.
+    """Parse the home page to get the menu structure.
 
     Args:
-        home (str): The Homepage as text 
+        home (str): Homepage as HTML string
     
     Returns:
         Tuple[str, list[WikiChapter]]: A tuple with a list of wiki chapters 
@@ -130,14 +130,14 @@ def parse_home(home: str) -> tuple[str, list[WikiChapter]]:
     return soup.prettify(), list(WikiChapter.create(menu))
 
 def clean_menu(menu: list[WikiChapter], content: list[WikiChapter]) -> Generator[WikiChapter]:
-    """#TODO.
+    """Removes missing pages from menu entries.
 
     Args:
-        menu (list[WikiChapter]): #TODO
-        content (list[WikiChapter]): #TODO
+        menu (list[WikiChapter]): List of menu chapter
+        content (list[WikiChapter]): List of available pages
         
     Returns:
-        Generator[WikiChapter, None, None]: A Generator for the Wiki Page 
+        Generator[WikiChapter, None, None]: A Generator for the cleaned menu chapters 
 
     """
     for idx, chapter in enumerate(menu):
@@ -150,12 +150,15 @@ def clean_menu(menu: list[WikiChapter], content: list[WikiChapter]) -> Generator
         yield chapter
 
 # TODO Why does this exists
-def _fix_styles(style: str):
-    """Helper Function for fixing style.
+def _fix_styles(style: str) -> str:
+    """Helper Function for fixing style (CSS) of the wiki.
     
     Args:
-        style (str): Style as string block
+        style (str): Raw CSS string
     
+    Returns:
+        str: Fixed CSS string
+        
     """
     style = style.replace("--color-link: #206ea7", f"--color-link: {settings.theme.get('links')}")
     style = style.replace("color:#222", "color:#fff")

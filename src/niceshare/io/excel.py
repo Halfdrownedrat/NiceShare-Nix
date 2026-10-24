@@ -24,14 +24,16 @@ async def handle_request(
     delete: bool = False) -> DataFrame:
     """Handle Request.
 
+    Handles incoming request by processing data, managing overlaps, and writing to Excel.
+
     Args:
         request (dict[str, str | dict[str, str]]): The Request in dict format
         warehouses (list[Warehouse]): A list of warehosues to request from
-        dl_path (Path): #TODO
-        delete (bool): #TODO
+        dl_path (Path): Path to save the genereated download file
+        delete (bool): Whether to delete the request instead of updating
     
     Returns:
-        DataFrame: #TODO
+        DataFrame: The processed request data, including overlaps and metadata
 
     """
     start, end, month, year = convert_dates(request.get("dates"), string=False) #TODO UNUSED
@@ -108,13 +110,13 @@ async def handle_request(
     return sheets[request_name]
 
 def write_overview(request: dict[str, str | dict[str, str]]) -> DataFrame:
-    """Helper Function for writing Overviews (Metadata).
+    """Writes request metadata to DataFrame for overview sheet.
     
     Args:
         request (dict[str, str | dict[str, str]]): The request that was done
     
     Returns:
-        DataFrame: A dataframe with the transaction overview
+        DataFrame: A dataframe with the request metadata
     
     """
     # Write Column Headers
@@ -145,6 +147,8 @@ def write_overview(request: dict[str, str | dict[str, str]]) -> DataFrame:
 
 def write_sheet(df: DataFrame, ws: Worksheet, wb: Workbook):
     """Write Data to a excel sheet.
+
+    Writes a Polars DataFrame to an Excel worksheet with conditional formatting.
     
     Args:
         df (DataFrame): The data to be written
@@ -165,15 +169,15 @@ def write_sheet(df: DataFrame, ws: Worksheet, wb: Workbook):
         write_sheet(pl.from_dict(backup), ws, wb)
 
 def find_overlaps(sheets:dict[str, DataFrame], request: dict[str, str | dict[str, str]], delete:bool) -> dict[str, DataFrame]:
-    """Checks for different types of overlaps in requests.
+    """Checks and marks different types of overlaps in requests and data entries.
 
     Args:
-        sheets (dict[str, DataFrame]): The sheet data to search in
+        sheets (dict[str, DataFrame]): The sheet data to check for overlaps
         request (dict[str, str | dict[str, str]]): The current requests
-        delete (bool): If things should be deleted
+        delete (bool): Whether the request is being deleted
     
     Returns:
-        dict[str, DataFrame]: The Updated sheet
+        dict[str, DataFrame]: Sheets with overlap fresh overlap markes.
 
     """
     # Check if to requests overlap timewise
@@ -226,9 +230,9 @@ def add_overlap_column(df: DataFrame, other: DataFrame | list, col_to_match: str
 
     Args:
         df (DataFrame): The df to add/update
-        other (DataFrame | list): The Reference dataset
+        other (DataFrame | list): The Reference data or list of values to match against
         col_to_match (str): Columnname to use for comparing
-        delete (bool): #TODO
+        delete (bool): Whether to remove overlaps (set to False) or mark them.
     
     Returns:
         DataFrame: The updated dataframe

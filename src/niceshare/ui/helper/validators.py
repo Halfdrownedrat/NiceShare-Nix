@@ -17,57 +17,56 @@ URL_REGEX: re.Pattern = re.compile(r"^(https):\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/
 
 
 def validate_mail(key: str, email: str, request: ObservableDict) -> Any | None: 
-    """Email Validation.
+    """Email Validation (Form and deliverability).
 
     Args:
-        key (str): #TODO
+        key (str): Field key for error messaging
         email (str): The Email Adress to validate
-        request (ObservableDict): #TODO 
+        request (ObservableDict): Form Data
     
     Returns:
-        Any | None:
+        Any | None: Error message if failed, None otherwise
 
     """
     try:
         request.update({key: validate_email(email, check_deliverability=True, strict=True).normalized})
-        return
     except EmailNotValidError as e:
         return e.args[0]
 
 def validate_number(key: str, donation: str, request: ObservableDict) -> Any | None:
-    """Phone Number Validation.
+    """Validates the donation value.
+
+    Checks for real, larger then zero numbers.
 
     Args:
-        key (str): #TODO
-        donation (str): #TODO 
-        request (ObservableDict): #TODO 
+        key (str): Field key for error messaging
+        donation (str): Donation value to validate
+        request (ObservableDict): Form Data
     
     Returns:
-        Any | None:
+        Any | None: Error message if failed, None otherwise
 
     """
     #TODO cast to int outside and only accept int for donation 
 
     try:
         request.update({key: int(donation)})
-        return
     except ValueError:
         return i18n.get("form.number_invalid")
 
 def validate_url(url: str, data:dict[str, str]) -> Any | None:
-    """URL Validation.
+    """URL Validation and data update (if valid).
 
     Args:
-        key (str): #TODO
-        data (dict[str, str]): #TODO
+        url (str): URL to validate
+        data (dict[str, str]): Form data #TODO Why is this taking a different dict
 
     Returns:
-        Any | None:
+        Any | None: Error message if failed, None otherwise
     
     """
     try:
         url = URL_REGEX.match(url).string
         data[settings.columns.get("url")] = url
-        return
     except AttributeError:
         return i18n.get("admin.url_invalid")

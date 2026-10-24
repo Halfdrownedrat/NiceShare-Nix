@@ -1,5 +1,4 @@
 """Nectcloud Handling Module."""
-# read ods file to get inventory data
 from pathlib import Path
 from typing import Self
 
@@ -30,10 +29,10 @@ class Nextcloud(Client):
     instance = None
 
     def __init__(self, remote_dir: str, ncs: NextcloudSettings = NextcloudSettings()): #TODO Do not perform function call `NextcloudSettings` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
-        """Nextcloud init.
+        """Initializes a Nextcloud client instance.
 
         Args:
-            remote_dir (str): Web URL to the nextcloud folder
+            remote_dir (str): Remote directory path on Nextcloud
             ncs (NextcloudSettings): Settings for Nextcloud
 
         """
@@ -45,7 +44,11 @@ class Nextcloud(Client):
 
     @classmethod
     def singleton(cls) -> Self:
-        """#TODO idk."""
+        """Returns the singleton instance of Nextcloud.
+        
+        Returns:
+            Self: The Singleton Nextcloud instance.
+        """
         if not cls.instance:
             cls.instance = Nextcloud(remote_dir=settings.dav["dir"])
         return cls.instance
@@ -71,8 +74,8 @@ class Nextcloud(Client):
         """Pull a specific (singular) file from the remote.
 
         Args:
-            key (str): #TODO 
-            file (str): Filepath as string 
+            key (str): Identifier for the file 
+            file (str): Remote file path
         
         """
         if key in ["inventory", "logo"]:
@@ -98,7 +101,7 @@ class Nextcloud(Client):
         """Push File to remote (Update or Upload).
 
         Args:
-            file (Path): File to upload 
+            file (Path): Path to local file for upload
             force (bool): If any existign files should be overwritten, default is True
         """
         try:

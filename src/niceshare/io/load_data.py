@@ -14,13 +14,14 @@ from niceshare.ui.helper.markdown import read_page_files
 
 
 async def load_data_from_dav(reload: bool = False) -> tuple[list[Warehouse], dict[str, str]]:
-    """Load Data from nexcloud using dav.
+    """Load warehouse inventory data and page files from Nexcloud.
     
     Args:
         reload (bool): Reload Overwrite over Argparser value
     
     Returns:
-        Tuple[list[Warehouse], dict[str, str]]: #TODO A lot
+        Tuple[list[Warehouse], dict[str, str]]: Tuple of warehouse list and page directory
+
     """
     if not ARGS.no_nextcloud:
         if not ARGS.reload or reload: #TODO I think something is off with the way reload is used
@@ -49,14 +50,14 @@ async def load_data_from_dav(reload: bool = False) -> tuple[list[Warehouse], dic
     return warehouses, pages
 
 
-async def load_wiki(reload: bool = False) -> Wiki:
-    """Loads the wiki.
+async def load_wiki_from_dav(reload: bool = False) -> Wiki:
+    """Loads the wiki content from Nextcloud.
 
     Args:
-        reload (bool): #TODO
+        reload (bool): Whether to force reload wiki data.
     
     Returns:
-        Wiki: The newly loadet wiki
+        Wiki: TThe loaded wiki object
     """
     if not ARGS.reload or reload: #TODO Same as above
         await pull_wiki()

@@ -1,6 +1,7 @@
 """Columns Module."""
 from collections.abc import Callable
 from functools import wraps
+from typing import Any
 
 from niceshare.helper.config import settings
 
@@ -9,15 +10,16 @@ type colDefFunction = Callable[[colSettings, bool, bool], dict[str, Any]]
 
 
 def col_defs(cart: bool, admin: bool, columns=settings.columns) -> list[dict[str, Any]]:
-    """#TODO.
+    """Generates column definitions based on user role and cart mode.
 
     Args:
-        cart (bool):
-        admin (bool):
-        columns:
+        cart (bool): Whether in cart mode 
+        admin (bool): If the user is admin
+        columns: The column names
 
     Returns:
-        list[dict[str, Any]]:
+        list[dict[str, Any]]: List of column definition directorys 
+    # TODO unsure
 
     """
     return [col_fns.get(c)(columns, cart, admin) if col_fns.get(c) else {"hide": True} for c in columns.keys()]
@@ -27,24 +29,16 @@ col_fns = {}
 
 
 def register_column(name: str) -> Callable[[colDefFunction], colDefFunction]:
-    """#TODO.
+    """Decorator to register a column definition function.
 
     Args:
-        name (str):
+        name (str): Column name to register
 
     Returns:
-        Callable[[colDefFunction], colDefFunction]: 
+        Callable[[colDefFunction], colDefFunction]: Decorator that registers the function in col_fns.
     
     """
     def decorator(func: colDefFunction) -> colDefFunction:
-        """#TODO.
-
-        Args:
-            func (colDefFunction):
-
-        Returns:
-            colDefFunction
-        """
         @wraps(func)
         def wrapper(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
             return func(columns, cart, admin)
@@ -56,11 +50,11 @@ def register_column(name: str) -> Callable[[colDefFunction], colDefFunction]:
 
 
 def default_col_defs() -> dict[str, Any]:
-    """#TODO.
+    """Returns default column properties.
 
     Returns:
-        dict[str, Any]:
-    
+        dict[str, Any]: Dictionary with default column settings.
+
     """
     return {
         "editable": False,
@@ -77,15 +71,16 @@ def default_col_defs() -> dict[str, Any]:
 
 @register_column("image")
 def image_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
-    """#TODO.
+    """Generates image column definition.
 
     Args:
-        columns (colSettings):
-        cart (bool):
-        admin (bool):
+        columns (colSettings): Column settings
+        cart (bool): Whether in cart mode 
+        admin (bool): If the user is admin
 
     Returns:
-        dict[str, Any]
+        dict[str, Any]: Image Column definition.
+
     """
     return {
         "colId": columns["image"],
@@ -104,16 +99,16 @@ def image_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
 
 @register_column("object")
 def object_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
-    """#TODO.
+    """Generates object column definition.
 
     Args:
-        columns (colSettings):
-        cart (bool):
-        admin (bool):
+        columns (colSettings): Column settings
+        cart (bool): Whether in cart mode 
+        admin (bool): If the user is admin
 
     Returns:
-        dict[str, Any]
-    
+        dict[str, Any]: Image Column definition.
+
     """
     return {
         "field": columns["object"],
@@ -152,15 +147,15 @@ def object_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
 
 @register_column("weight")
 def weight_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
-    """#TODO.
+    """Generates weight column definition.
 
     Args:
-        columns (colSettings):
-        cart (bool):
-        admin (bool):
+        columns (colSettings): Column settings
+        cart (bool): Whether in cart mode 
+        admin (bool): If the user is admin
 
     Returns:
-        dict[str, Any]
+        dict[str, Any]: Weight column definition
     
     """
     return {
@@ -177,15 +172,15 @@ def weight_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
 
 @register_column("count")
 def count_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
-    """#TODO.
+    """Generates count column definition.
 
     Args:
-        columns (colSettings):
-        cart (bool):
-        admin (bool):
+        columns (colSettings): Column settings
+        cart (bool): Whether in cart mode 
+        admin (bool): If the user is admin
 
     Returns:
-        dict[str, Any]
+        dict[str, Any]: Count column definition
     
     """
     return {
@@ -209,15 +204,15 @@ def count_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
 
 @register_column("pack")
 def pack_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
-    """#TODO.
+    """Generates pack column definition.
 
     Args:
-        columns (colSettings):
-        cart (bool):
-        admin (bool):
+        columns (colSettings): Column settings
+        cart (bool): Whether in cart mode 
+        admin (bool): If the user is admin
 
     Returns:
-        dict[str, Any]
+        dict[str, Any]: Pack column definition
     
     """
     return {
@@ -254,15 +249,15 @@ def pack_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
 
 @register_column("total_weight")
 def total_weight_col(columns: colSettings, cart: bool, admin: bool) -> dict[str, Any]:
-    """#TODO.
+    """Generates total weight column definition.
 
     Args:
-        columns (colSettings):
-        cart (bool):
-        admin (bool):
+        columns (colSettings): Column settings
+        cart (bool): Whether in cart mode 
+        admin (bool): If the user is admin
 
     Returns:
-        dict[str, Any]
+        dict[str, Any]: Total weight column definition
     
     """
     return {

@@ -105,7 +105,7 @@ async def upload_img(warehouse_name:str, event: UploadEventArguments, data:dict)
         make_thumbnail(path)
         app.add_static_file(local_file=path, url_path=img_url)
         data[settings.columns["image"]] = _construct_img_url(warehouse_name, filename, file_extension, domain=True)
-        ui.notify(f"Upload successful.")
+        ui.notify("Upload successful.")
     except ClientDisconnect:
         ui.notify("Connection failed, please retry uploading the image.")
 
@@ -182,7 +182,7 @@ async def cache_base64_img(src:str, subfolder:str, filename:str, thumbnail_size:
             Image.open(BytesIO(base64.b64decode(base))).save(path)
             make_thumbnail(path, thumbnail_size)
             LOGGER.info(f"Successfully converted image from {split[-1]} and saved to {path}.")
-        except IOError: #TODO maybe replace with OSError
+        except OSError: 
             LOGGER.exception(f"Could not convert image from {split[-1]} and save it to {path}", exc_info=True)
             return src
     img_url = _construct_img_url(subfolder, filename, ext, domain=False)

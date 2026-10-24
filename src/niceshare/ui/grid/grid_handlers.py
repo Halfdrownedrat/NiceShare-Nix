@@ -19,13 +19,13 @@ from niceshare.ui.helper.validators import validate_url
 
 
 async def update_amount(grid: AgGrid, name:str, df: DataFrame, event: GenericEventArguments) -> None:
-    """#TODO.
+    """Update item count in cart and recalculate total weight.
 
     Args:
-        grid (AgGrid):
-        name (str):
-        df (DataFrame):
-        event (GenericEventArguments):
+        grid (AgGrid): The AgGrid isntance
+        name (str): Warehouse name
+        df (DataFrame): Inventory data
+        event (GenericEventArguments): Event args from grid interaction
 
     """
     with suppress(KeyError):
@@ -47,12 +47,12 @@ async def update_amount(grid: AgGrid, name:str, df: DataFrame, event: GenericEve
 
 
 def handle_select(name: str, event: GenericEventArguments, grid: AgGrid) -> None:
-    """#TODO.
+    """Handles row selection in the grid.
 
     Args:
-        name (str):
-        event (GenericEventArguments):
-        grid (AGrid):
+        grid (AgGrid): The AgGrid isntance
+        name (str): Warehouse name
+        event (GenericEventArguments): Event args from grid interaction
 
     """
     with suppress(KeyError):
@@ -70,12 +70,12 @@ def handle_select(name: str, event: GenericEventArguments, grid: AgGrid) -> None
 
 
 def handle_click(warehouse:Warehouse, grid: AgGrid, event: GenericEventArguments) -> None:
-    """#TODO.
-
+    """Handles click event on single cell.
+    
     Args:
-        warehouse (Warehouse):
-        grid (AgGrid):
-        event (GenericEventArguments):
+        warehouse (Warehouse): Warehouse instance
+        grid (AgGrid): The AgGrid isntance
+        event (GenericEventArguments): Event args from grid interaction
 
     """
     columns = settings.columns
@@ -86,24 +86,25 @@ def handle_click(warehouse:Warehouse, grid: AgGrid, event: GenericEventArguments
                 any([data[columns["image"]], data[columns["comment"]], data[columns["url"]]])
                 and event.args["colId"] == columns["image"] and not admin
         ):
-            info_popup(warehouse, event.args, grid)
+            _info_popup(warehouse, event.args, grid)
         elif admin and event.args["colId"] == columns["image"]:
-            info_popup(warehouse, event.args, grid)
+            _info_popup(warehouse, event.args, grid)
         else:
             handle_select(warehouse.name, event, grid) if not admin else None
     except KeyError:
         handle_select(warehouse.name, event, grid) if not admin else None
 
-def info_popup(warehouse:Warehouse, event_args: dict, grid: AgGrid) -> Dialog:
-    """#TODO.
+def _info_popup(warehouse:Warehouse, event_args: dict, grid: AgGrid) -> Dialog:
+    """Displays a popup dialog with item details and editing options.
 
     Args:
-        warehouse (Warehouse):
-        grid (AgGrid):
-        event (GenericEventArguments):
+        warehouse (Warehouse): Warehouse instance
+        event_args (dict): Event arguments containting data
+        grid (AgGrid): The AgGrid isntance
 
     Returns:
-        Dialog: 
+        Dialog: The created dialog
+
     """
     admin = authenticate_user()
     data = event_args["data"]
@@ -114,12 +115,13 @@ def info_popup(warehouse:Warehouse, event_args: dict, grid: AgGrid) -> Dialog:
 
 @ui.refreshable
 def dia_content(dia:Dialog, name: str, data: dict[str, str], admin: bool) -> None:
-    """#TODO.
+    """Renders the content of the info popup dialog.
 
     Args:
-        dia (Dialog):
-        name (str):
-        data (dict[str, str], admin: bool)):
+        dia (Dialog): Dialog instance 
+        name (str): Warehouse name
+        data (dict[str, str], admin: bool)): Item data
+        admin (bool): If the user is admin
 
     """
     columns = settings.columns
@@ -155,12 +157,12 @@ def dia_content(dia:Dialog, name: str, data: dict[str, str], admin: bool) -> Non
         ui.button("Fertig", icon="check", on_click=lambda: dia.close()).props("text-color=secondary")
 
 def update_row_data(data: dict[str, str], grid: AgGrid, warehouse:Warehouse) -> None:
-    """#TODO.
+    """Updates the grid row with modified data.
 
     Args:
-        data (dict[str, str]):
-        grid (AgGrid):
-        warehouse (Warehouse):
+        data (dict[str, str]): Modified item data
+        grid (AgGrid): The AgGrid instance
+        warehouse (Warehouse): Warehouse instance
 
     """
     grid.run_row_method(data["index"], "setData", data)

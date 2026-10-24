@@ -37,7 +37,7 @@ class Form:
         """Validates the correctness of the form.
 
         Returns:
-            bool: If the form is correct or not
+            bool: If the form is valid, False otherwise
 
         """
         with suppress(NameError):
@@ -58,7 +58,7 @@ class Form:
         """Creates a new form.
 
         Args:
-            warehosues (list[Warehouse]): A list of available warehouses 
+            warehouses (list[Warehouse]): A list of available warehouses 
 
         """
         with ui.dialog() as delete_dialog:
@@ -123,12 +123,12 @@ class Form:
 
 
 async def submit_form(request: ObservableDict, warehouses: list[Warehouse], delete:bool = False) -> None:
-    """Submits the filled form (and sends mail).
+    """Submits the filled form and sends email notification.
 
     Args:
-        request (ObservableDict):
-        warehouses (list[Warehouse]): 
-        delete:bool = False:
+        request (ObservableDict): Form Data
+        warehouses (list[Warehouse]):  List of warehouses
+        delete:bool = False: Whether to delete the request
 
     """
     is_update = True if request.get("request") else False
@@ -148,12 +148,12 @@ async def submit_form(request: ObservableDict, warehouses: list[Warehouse], dele
             )
         )
         request.update({"download": str(dl_path)})
-    except Exception as exception:
+    except Exception as e:
         request.update({"finish": i18n.get("finish.failure_mail")})
         try:
-            LOGGER.exception(exception)
+            LOGGER.exception(e)
             await nicegui.run.io_bound(
-                lambda: send_mail(request, request_type=RequestType.failure, exception=exception) #TODO issue with exception 
+                lambda exc=e: send_mail(request, request_type=RequestType.failure, exception=exc)
             )
             request.update({"finish": i18n.get("finish.failure_success")})
         except socket.gaierror:

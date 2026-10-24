@@ -17,8 +17,8 @@ async def create_aggrid(name: str, df:DataFrame, cart: bool = False) -> AgGrid:
     """Returns an AG Grid displaying the given data in the given configuration.
 
     Args:
-        name (str):
-        df (DataFrame):
+        name (str): Warehouse or cart name
+        df (DataFrame): Data to display in the grid
         cart (bool): Whether the grid is for the cart page. Defaults to False.
 
     Returns:
@@ -47,11 +47,11 @@ def register_event_handlers(grid: AgGrid, name: str, df: DataFrame, cart: bool, 
     """Register the event handlers for the given grid.
 
     Args:
-        grid (AgGrid):
-        name (str):
-        df (DataFrame):
+        grid (AgGrid): The AgGrid instance 
+        name (str): Warehouse or cart name
+        df (DataFrame): DataFrame used in the grid
         cart (bool): Whether the grid is for the cart page. Defaults to False.
-        admin (bool):
+        admin (bool):If the user is admin
         
     """
     # Handle events

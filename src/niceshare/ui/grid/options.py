@@ -3,14 +3,14 @@ from niceshare.ui.grid.columns import col_defs, default_col_defs
 
 
 def options(cart: bool, admin: bool) -> dict:
-    """#TODO.
+    """Geberates AgGrid options based on user role/privilages and cart mode.
     
     Args:
-        cart (bool):
-        admin (bool):
+        cart (bool): Whether in cart mode
+        admin (bool): If the user is admin
     
     Returns.
-        dict: 
+        dict: Dict of AgGrid configuration options 
     
     """
     return {

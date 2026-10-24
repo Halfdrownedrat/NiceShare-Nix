@@ -8,11 +8,11 @@ from niceshare.helper.images import generate_qrcode
 
 
 async def share_content(name:str, content:str, verbose: bool = False) -> None:
-    """Share content function.
+    """Share content though the clipboard.
 
     Args:
-        name (str):
-        content (str):
+        name (str): Content name
+        content (str): The content
         verbose (bool): If sharing should be verbose (more/detailed)
 
     """
@@ -32,10 +32,10 @@ async def share_content(name:str, content:str, verbose: bool = False) -> None:
 
 
 async def get_qr_code(name:str) -> None:
-    """Displays the qr-code by name.
+    """Displays a QR-Code for the current page URL.
 
     Args:
-        name (str): Name of the qr-code
+        name (str): Name to use for the qr-code
 
     """
     url = await ui.run_javascript('window.location.href')

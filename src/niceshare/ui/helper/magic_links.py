@@ -1,5 +1,6 @@
 """Magic Link Handler."""
 from pathlib import Path
+
 from nicegui import app, json, ui
 from slugify import slugify
 
@@ -8,20 +9,20 @@ from niceshare.helper.paths import get_path
 
 
 def get_magic_link() -> str:
-    """Getter for a magic link.
+    """Generates a magic link for sharing active cart contents..
 
     Returns:
-        str: The link
+        str: The link with user ID token
 
     """
     return f"{settings.domain}/{slugify(settings.cart['label'])}?id={app.storage.browser['id']}"
 
 
 def load_data_from_magic_link(new_id: str) -> None:
-    """Load data from magic link.
+    """Load user/cart data from given magic link.
 
     Args:
-        new_id (str):
+        new_id (str): The ID from the link
 
     """
     try:

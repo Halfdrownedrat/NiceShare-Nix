@@ -45,16 +45,14 @@ def send_mail(
     exception: Exception | None = None,
     mail_server: MailServer = MailServer(), #TODO Do not perform function call `MailServer` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
 ) -> None:
-    """Email Sender.
-
-    Creates and handles the request email
+    """Sends an email notification for a request.
 
     Args:
-        request (dict[str, str | dict[str, str]]): Request Dict 
-        request_type (RequestType): Request Type
-        filename (Path): Potential file (Path) to be attached to the email
-        exception (Exception): #TODO 
-        mail_server (MailServer): Custom MailServer or default if none specified
+        request (dict[str, str | dict[str, str]]): Request data to include 
+        request_type (RequestType): Request Type (request, update, delete, failure)
+        filename (Path): Optional file (Path) to be attached to the email
+        exception (Exception): Optional exeption to include for failure emails 
+        mail_server (MailServer): Custom SMTP or default if none specified
     
     """
     LOGGER.debug("Connecting to SMTP Server...")
@@ -102,14 +100,14 @@ def send_mail(
 
 
 def _create_subject(request: dict[str, str | dict[str, str]], rtype: RequestType) -> str:
-    """Email Subject Creator.
+    """Creates an email subject line based on request type and dates.
     
     Args:
-        request (dict[str, str | dict[str, str]]): The request dict 
+        request (dict[str, str | dict[str, str]]): The request data 
         rtype (RequestType): The Request type 
     
     Returns:
-        str: Thre request converted into a subject line with current date
+        str: Formatted subject string
 
     """
     start, end, month, year = convert_dates(request.get("dates")) #TODO start, end never used
@@ -121,15 +119,15 @@ def _create_subject(request: dict[str, str | dict[str, str]], rtype: RequestType
 def _create_text(
     ttype: Literal["text", "html"], request: dict[str, str | float | dict[str, str]], exception: Exception #TODO some problem here
 ) -> str:
-    """The Email main body text Creator.
+    """Creates the email body text in plain or HTML format.
 
     Args:
         ttype (Literal["text", "html"]): If the text is using plain text or html
         request (dict[str, str | float | dict[str, str]]): The request dict
-        exception (Exception): #TODO 
+        exception (Exception): Optional exception to include in failure messages. 
     
     Returns:
-        str: The mail body 
+        str: Formatted email body
     
     """
     newline = "\n" if ttype == "text" else "<br>"

@@ -14,7 +14,7 @@ def badge(text: str) -> Badge:
     """Converts raw text to an ui badge.
 
     Args:
-        text (str): Text to convert
+        text (str): Text to display
 
     Returns:
         Badge: UI Badge Element
@@ -24,10 +24,10 @@ def badge(text: str) -> Badge:
 
 
 def tabs() -> Tabs:
-    """Creates styled tabs.
+    """Creates styled navigation tabs.
 
     Returns:
-        Tabs: Styled tabs
+        Tabs: Styled tab component
 
     """
     return (
@@ -40,23 +40,23 @@ def tabs() -> Tabs:
 
 
 def tab_panels(_tabs: Tabs) -> tab_panels:
-    """Creates tab panels.
+    """Creates tab panels linked to existing tabs.
     
     Args:
-        _tabs (Tabs): Existing tabs.
+        _tabs (Tabs): Existing tabs
 
     Returns:
-        tab_panels: Tab panels
+        tab_panels: Tab panels component
 
     """
     return ui.tab_panels(_tabs).classes("w-full h-dvh")
 
-
+#fab = floating action button.
 def next_fab(next_page: dict[str, str]) -> None:
-    """Moves the selectio to the net tab in order.
+    """Creates a floating action button for navigating to the next page.
 
     Args:
-        next_page (dict[str, str]): 
+        next_page (dict[str, str]): Dict containing page label and icon 
 
     """
     props: str = "text-color=secondary"
@@ -78,10 +78,10 @@ def next_fab(next_page: dict[str, str]) -> None:
 
 
 def back_fab(last_page: dict[str, str]) -> None:
-    """Moves the selection to the previous tab in order.
+    """Creates a floating action button for navigating to the previous page.
 
     Args:
-        last_page (dict[str, str]):
+        las_page (dict[str, str]): Dict containing page label and icon 
 
     """
     props: str = "text-color=primary"
@@ -102,13 +102,12 @@ def back_fab(last_page: dict[str, str]) -> None:
             badge.bind_text_from(app.storage.user, "Total")
             badge.bind_visibility_from(app.storage.user, "Total", backward=lambda v: v > 0)
 
-#fab = floating action button.
 def share_fab(name:str, content:str) -> None:
-    """Button for sharing stuff.
+    """Creates a floating action button for sharing content.
 
     Args:
-        name (str):
-        content (str):
+        name (str): Name of the content
+        content (str): The content to share
 
     """
     with ui.page_sticky(x_offset=40, y_offset=40):
@@ -120,10 +119,10 @@ def share_fab(name:str, content:str) -> None:
 
 
 def save_fab(warehouse: Warehouse) -> None:
-    """Button for saving stuff.
+    """Creates a floating action button for saving warehouse data.
 
     Args:
-        warehouse (Warehouse):
+        warehouse (Warehouse): Warehouse instance to save
 
     """
     async def save_data():
