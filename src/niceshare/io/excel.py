@@ -22,7 +22,7 @@ async def handle_request(
     request: dict[str, str | dict[str, str]],
     warehouses: list[Warehouse],
     dl_path: Path,
-    delete: bool = False) -> DataFrame:
+    delete_request: bool = False) -> DataFrame:
     """Handle Request.
 
     Handles incoming request by processing data, managing overlaps, and writing to Excel.
@@ -31,27 +31,32 @@ async def handle_request(
         request (dict[str, str | dict[str, str]]): The Request in dict format
         warehouses (list[Warehouse]): A list of warehosues to request from
         dl_path (Path): Path to save the genereated download file
-        delete (bool): Whether to delete the request instead of updating
+        delete_request (bool): Whether to delete the request instead of updating
     
     Returns:
         DataFrame: The processed request data, including overlaps and metadata
 
     """
     _, _, _, year = convert_dates(request.get("dates"), string=False) 
-    path = get_path(f"{settings.requests['filename']}-20{year}.xlsx")
-    sheets = {}
+    excel_path = get_path(f"{settings.requests['filename']}-20{year}.xlsx")
     name_col = settings.form["input"].get("name")
     request_name:str = request["name"]
     overview_name:str = f"20{year}"
+
+    LOGGER.debug(f"dl_path {dl_path}\n delete_request {delete_request}\n")
+    LOGGER.debug(f"Excel path: {excel_path}\n Name Column: {name_col}\n Request Name: {request_name}\n Overview Name: {overview_name}")
+
     # Write Overview (Metadata)
-    if not path.is_file(): # If it's the first request in this year
+    sheets: dict[str, DataFrame] = {}
+    if not excel_path.is_file(): # If it's the first request in this year
+        LOGGER.debug(f"Excel for year 20{year} missing, creatting it...")
         overview = write_overview(request)
     else: # Read all sheets and get overview sheet
-        sheets: dict[str, DataFrame] = pl.read_excel(path, sheet_id=0, raise_if_empty=False)
+        sheets = pl.read_excel(excel_path, sheet_id=0, raise_if_empty=False)
         overview = next(iter(sheets.values()))
         if overview.is_empty(): 
             overview = write_overview(request)
-        elif delete:
+        elif delete_request:
             overview = overview.join(write_overview(request), on=name_col, how='anti')
         else: # Append request
             overview = pl.concat((df.cast({settings.form['input'].get('donation'): pl.Int64})
@@ -64,10 +69,14 @@ async def handle_request(
     dfs = [await get_final(w.name, w.selected()) for w in warehouses]
     df = pl.concat([df for df in dfs if df is not None], how="align")
 
+    # Save to database
+    # TODO Why are we saving stuff to the database anyway? - P
+    #[DB.save(name, df, 'request') for name, df in sheets.items()]
+
     # TODO maybe move this back to submit function
-    if request_name in sheets.keys() and not delete:  # Update
+    if request_name in sheets.keys() and not delete_request:  # Update
         request.update({"finish": i18n.get("finish.updated")})
-    elif delete:
+    elif delete_request:
         request.update({"finish": i18n.get("finish.deleted")})
     else:  # Add
         request.update({"finish": i18n.get("finish.success")})
@@ -77,9 +86,9 @@ async def handle_request(
     # Find overlaps and add overlap column to each sheet accordingly
     # TODO Known Bug: If there is a request overlapping with more than one other request and this request gets deleted,
     #  the others are still marked as overlapping although they may or may not overlap each other
-    sheets = find_overlaps(sheets, request, delete)
+    sheets = find_overlaps(sheets, request, delete_request)
 
-    if delete:
+    if delete_request:
         sheets.pop(request_name)  # Needs to happen before writing but after finding overlaps
     else: # Write excel file for download
         dl_path.unlink(missing_ok=True) #TODO Async functions should not perform blocking pathlib.Path operations
@@ -91,27 +100,31 @@ async def handle_request(
                 LOGGER.debug(f"Creating download list sheet {name} @{dl_path}")
                 write_sheet(data.filter(pl.col(settings.warehouse["label"]) == name), dl_wb.add_worksheet(name), dl_wb)
 
-    # Save to database
-    #[DB.save(name, df, 'request') for name, df in sheets.items()]
+    try:        
+        with (Workbook(excel_path, {'strings_to_numbers': True, 'default_date_format': settings.date_format}) as workbook):
+            # Write Overview
+            worksheet = workbook.add_worksheet(overview_name)
+            write_sheet(sheets[overview_name], worksheet, workbook)
 
-    with (Workbook(path, {'strings_to_numbers': True, 'default_date_format': settings.date_format}) as workbook):
-        # Write Overview
-        worksheet = workbook.add_worksheet(overview_name)
-        write_sheet(sheets[overview_name], worksheet, workbook)
+            # Write Request Sheets
+            for name in overview.select(pl.col(name_col)).to_series().to_list():
+                # Clear all existing sheets for persons listed in overview Name column
+                if worksheet:= workbook.get_worksheet_by_name(name):
+                    worksheet.table_cells.clear() #TODO why are we clearing this? - P
+                else:
+                    worksheet = workbook.add_worksheet(name)
+                LOGGER.error("%s: %s", name, sheets.get(name))
+                write_sheet(sheets[name], worksheet, workbook)
 
-        # Write Request Sheets
-        for name in overview.select(pl.col(name_col)).to_series().to_list():
-            if worksheet:= workbook.get_worksheet_by_name(name):
-                worksheet.table_cells.clear()
-            else:
-                worksheet = workbook.add_worksheet(name)
-            write_sheet(sheets[name], worksheet, workbook)
+            LOGGER.info(f"Successfully wrote request to {excel_path}")
+    except KeyError as ke:
+        LOGGER.error(f"Failed to write request to {excel_path} with {ke}")
+        LOGGER.debug(f"Available keys: {sheets.keys()}")
 
-    LOGGER.info(f"Successfully wrote request to {path}")
     if ARGS.no_nextcloud:
         LOGGER.debug("not pushing file update to nextcloud - disabled in cli")
     else:
-        Nextcloud.singleton().push_file(path)
+        Nextcloud.singleton().push_file(excel_path)
     return sheets[request_name]
 
 def write_overview(request: dict[str, str | dict[str, str]]) -> DataFrame:

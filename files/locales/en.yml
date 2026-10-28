@@ -29,7 +29,7 @@ finish:
   no_overlap: "Until now, there is no overlap with another request during this time. If we get any, we may reach out to you."
   overlap: "Sadly, your request overlaps with another request. Things, that overlap, are marked red in your list. We will see if we can find a solution for this and might put you in contact with the other group. If you have other ways to get these things, please let us know."
   failure_mail: "Something went wrong :/ A mail with the error is being sent..."
-  failure_success: "A mil with the error has been sent to us. We will reach out to you soon."
+  failure_success: "A mail with the error has been sent to us. We will reach out to you soon."
   mail_exception: "Unfortunately no automatic mail has been sent because the mail server is unreachable. Please send a mail to infraunited@autistici.org to notify us that there is an error and include the following link and the data you've entered in the form. Thanks!"
   deleted: "Your request has been deleted. See you soon!"
   download_button: 'Download Excel'

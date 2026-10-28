@@ -60,14 +60,14 @@ def send_mail(
     mail_server = MailServer() if mail_server is None else mail_server #Default mail server
 
     LOGGER.debug("Connecting to SMTP Server...")
-    email = request.get("email")
-    user_id = request.get("edit_link").split("=")[-1]
+    email:str = request.get("email")
+    user_id:str = request.get("edit_link").split("=")[-1]
 
     # Constructing the email
     mail = MIMEMultipart("mixed")
     mail.add_header("Subject", _create_subject(request, request_type))
-    mail.add_header("From", f"{mail_server.user}")
-    mail.add_header("Reply-To", f"{email}") 
+    mail.add_header("From", mail_server.user)
+    mail.add_header("Reply-To", email) 
     mail.add_header("Date", formatdate(localtime=True))
     mail.add_header("Message-ID", f"<{user_id}-{request.get(request_type)}@{mail_server.domain}>")
 
@@ -76,11 +76,11 @@ def send_mail(
         mail.add_header("In-Reply-To", f"<{user_id}-{request.get(RequestType.request)}@{mail_server.domain}>")
         mail.add_header("References", f"<{user_id}-{request.get('request')}@{mail_server.domain}>")
     mail.add_header("Return-Path", mail_server.user)
-    mail.add_header("Reply-To", f"{email}")
-    # mail.attach(MIMEText(create_text("text", request, exception), "plain"))
+    mail.add_header("Reply-To", email)
     mail.attach(MIMEText(_create_text("html", request, exception), "html"))
 
     # Attaching file as payload 
+    # TODO Check payload maybe? (reject everything that is not pdf or .txt or smth like that)
     if filename is not None:
         with Path.open(filename, "rb") as attachment:
             part = MIMEBase("application", "octet-stream")
@@ -96,15 +96,14 @@ def send_mail(
     if mail_server.port == 1025:
         # Proton mail bridge 
         with smtplib.SMTP(mail_server.domain, mail_server.port) as smtp:
+            LOGGER.debug("Using Proton Mail")
             smtp.starttls()
-            smtp.ehlo()
             smtp.set_debuglevel(1)
 
             LOGGER.debug("Logging into SMTP Client with credentials...")
             smtp.login(mail_server.user, mail_server.password)
 
             LOGGER.debug(f"Sending E-Mail to {receiver}...")
-            smtp.ehlo()
             smtp.sendmail(str(mail_server.user), receiver, mail.as_string())
             LOGGER.debug("Quitting Connection to SMTP Server...")
     else:
@@ -176,7 +175,8 @@ def _create_text(
                     add.append(f"{settings.form['input'].get(key)}: {value}")
     add.append(f"{newline}{newline}{settings.form.get('message')}: {newline}{newline}{request.get('message')}")
     add.append(newline)
+    # Add Exception text if provided
     if exception:
-        add.append(f"{newline}{newline}{list(exception.args)}: {newline}{newline}{traceback.format_exc()}")
+        add.append(f"{newline}{newline}{exception}: {newline}{newline}{traceback.format_exc()}") #TODO better way for error text possible?
 
     return newline.join(add)

@@ -24,6 +24,7 @@ from niceshare.ui.helper.magic_links import get_magic_link
 from niceshare.ui.helper.validators import INPUT_VALIDATION, validate_mail, validate_number
 
 
+# TODO Form behaves weirdly, does not show up on sufficently large screens without some resize / refresh event
 class Form:
     """Default Form for Requests."""
     def __init__(self):
@@ -82,7 +83,7 @@ class Form:
                 dates_label.classes("w-full pt-2 text-center tracking-widest")
                 dates = self.dates.classes("w-full h-full p-0").props("range minimal flat")
                 dates.move(column)
-                dates.props[":options"] = f'date => date >= "{datetime.date.today():%Y/%m/%d}"'
+                dates.props[":options"] = f'date => date >= "{datetime.date.today():%Y/%m/%d}"' #TODO tz stuff again
                 dates.props("color=secondary text-color=primary")
                 dates.bind_value(self.request, "dates")
 
@@ -122,9 +123,11 @@ class Form:
             submit.bind_icon_from(self.request, "request", backward=lambda v: "save" if v else "outgoing_mail")
 
 
-# TODO replace the godless elvis operators
 async def submit_form(request: ObservableDict, warehouses: list[Warehouse], delete:bool = False) -> None:
     """Submits the filled form and sends email notification.
+
+    Sends a mail to organization and user on success. Sends a failure mail to system admin on failure.
+    Displays Extra Message on complete failure (processing and email server down).
 
     Args:
         request (ObservableDict): Form Data
@@ -137,14 +140,22 @@ async def submit_form(request: ObservableDict, warehouses: list[Warehouse], dele
     ui.navigate.to(f"/{slugify(settings.finish['label'])}")
     magic_link = get_magic_link()
     request.update({"edit_link": magic_link})
-    request.update({"update": time.time()} if is_update and not delete else {"delete": time.time()} if delete else {"request": time.time()})
+    LOGGER.debug(request)
+    # Updates timestamps for actions
+    if (is_update and not delete):
+        request.update({"update": time.time()}) 
+    elif delete:
+        request.update({"delete": time.time()})
+    else:
+        request.update({"request": time.time()})
+
     try:
         dl_path = get_path(f"{settings.organization}-{request.get('name')}.xlsx", "lists")
         await handle_request(request, warehouses, dl_path, True)
         await nicegui.run.io_bound(
             lambda: send_mail(
                 request,
-                request_type=RequestType.update if is_update else RequestType.delete if delete else RequestType.request,
+                request_type=RequestType.update if is_update else (RequestType.delete if delete else RequestType.request),
                 filename=dl_path,
             )
         )
