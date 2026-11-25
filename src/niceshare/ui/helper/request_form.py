@@ -167,7 +167,7 @@ async def submit_form(request: ObservableDict, warehouses: list[Warehouse], dele
             await nicegui.run.io_bound(
                 lambda exc=e: send_mail(request, request_type=RequestType.failure, exception=exc)
             )
-            request.update({"finish": i18n.get("finish.failure_success")})
+            cache.update({"finish": i18n.get("finish.failure_success")})
         except socket.gaierror:
-            request.update({"finish": i18n.get("finish.mail_exception")})
+            cache.update({"finish": i18n.get("finish.mail_exception")})
             LOGGER.exception("The mailserver is unreachable. Try again later.")
